@@ -1,0 +1,57 @@
+The system is: Windows - 6.3.9600 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.33.31629/bin/Hostx64/x64/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Compilador de optimización de C/C++ de Microsoft (R) versión 19.33.31630 para x64
+(C) Microsoft Corporation. Todos los derechos reservados.
+
+CMakeCCompilerId.c
+Microsoft (R) Incremental Linker Version 14.33.31630.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/out:CMakeCCompilerId.exe 
+CMakeCCompilerId.obj 
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.exe"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
+
+The C compiler identification is MSVC, found in "C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Debug/CMakeFiles/3.23.22060601-MSVC_2/CompilerIdC/CMakeCCompilerId.exe"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_cd865 && [1/2] Building C object CMakeFiles\cmTC_cd865.dir\CMakeCCompilerABI.c.obj
+[2/2] Linking C executable cmTC_cd865.exe
+
+
+
+Determining if the include file sys/types.h exists passed with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_abc38 && [1/2] Building C object CMakeFiles\cmTC_abc38.dir\CheckIncludeFile.c.obj
+[2/2] Linking C executable cmTC_abc38.exe
+
+
+
+Determining if the include file stdint.h exists passed with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_eecd5 && [1/2] Building C object CMakeFiles\cmTC_eecd5.dir\CheckIncludeFile.c.obj
+[2/2] Linking C executable cmTC_eecd5.exe
+
+
+
+Determining if the include file stddef.h exists passed with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_588c4 && [1/2] Building C object CMakeFiles\cmTC_588c4.dir\CheckIncludeFile.c.obj
+[2/2] Linking C executable cmTC_588c4.exe
+
+
+

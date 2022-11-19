@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/jcstest.dir/__/jcstest.c.o -o ../jcstest  -Wl,-rpath,/home/diego/Desktop/printagent/printagent/jpeg/libjpeg-turbo-main/build ../libjpeg.so.62.3.0 

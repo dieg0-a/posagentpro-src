@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG "CMakeFiles/djpeg-static.dir/djpeg.c.o" "CMakeFiles/djpeg-static.dir/cdjpeg.c.o" "CMakeFiles/djpeg-static.dir/rdcolmap.c.o" "CMakeFiles/djpeg-static.dir/rdswitch.c.o" "CMakeFiles/djpeg-static.dir/wrgif.c.o" "CMakeFiles/djpeg-static.dir/wrppm.c.o" "CMakeFiles/djpeg-static.dir/wrbmp.c.o" "CMakeFiles/djpeg-static.dir/wrtarga.c.o" -o djpeg-static  libjpeg.a 

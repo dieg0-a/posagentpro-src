@@ -1,0 +1,51 @@
+Performing C SOURCE FILE Test RIGHT_SHIFT_IS_UNSIGNED failed with the following compile output:
+Change Dir: /home/diego/Desktop/printagent/printagent/jpeg/libjpeg-turbo-main/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_15811/fast && /usr/bin/make  -f CMakeFiles/cmTC_15811.dir/build.make CMakeFiles/cmTC_15811.dir/build
+make[1]: se entra en el directorio '/home/diego/Desktop/printagent/printagent/jpeg/libjpeg-turbo-main/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_15811.dir/src.c.o
+/usr/bin/cc -DRIGHT_SHIFT_IS_UNSIGNED   -o CMakeFiles/cmTC_15811.dir/src.c.o -c /home/diego/Desktop/printagent/printagent/jpeg/libjpeg-turbo-main/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_15811
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_15811.dir/link.txt --verbose=1
+/usr/bin/cc CMakeFiles/cmTC_15811.dir/src.c.o -o cmTC_15811 
+make[1]: se sale del directorio '/home/diego/Desktop/printagent/printagent/jpeg/libjpeg-turbo-main/build/CMakeFiles/CMakeTmp'
+
+
+...and run output:
+
+Return value: 1
+Source file was:
+
+      #include <stdio.h>
+      #include <stdlib.h>
+      int is_shifting_signed (long arg) {
+        long res = arg >> 4;
+        if (res == -0x7F7E80CL)
+          return 1; /* right shift is signed */
+        /* see if unsigned-shift hack will fix it. */
+        /* we can't just test exact value since it depends on width of long... */
+        res |= (~0L) << (32-4);
+        if (res == -0x7F7E80CL)
+          return 0; /* right shift is unsigned */
+        printf("Right shift isn't acting as I expect it to.\n");
+        printf("I fear the JPEG software will not work at all.\n\n");
+        return 0; /* try it with unsigned anyway */
+      }
+      int main (void) {
+        exit(is_shifting_signed(-0x7F7E80B1L));
+      }
+Looking for a ASM_NASM compiler failed with the following output:
+-- The ASM_NASM compiler identification is unknown
+-- Didn't find assembler
+CMake Error at CMakeLists.txt:2 (project):
+  No CMAKE_ASM_NASM_COMPILER could be found.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "ASM_NASM" or the CMake cache entry CMAKE_ASM_NASM_COMPILER to the
+  full path to the compiler, or to the compiler name if it is in the PATH.
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/diego/Desktop/printagent/printagent/jpeg/libjpeg-turbo-main/build/simd/CMakeFiles/CheckASM_NASM/CMakeFiles/CMakeOutput.log".
+See also "/home/diego/Desktop/printagent/printagent/jpeg/libjpeg-turbo-main/build/simd/CMakeFiles/CheckASM_NASM/CMakeFiles/CMakeError.log".
+

@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/tjbench.dir/tjbench.c.o CMakeFiles/tjbench.dir/tjutil.c.o -o tjbench  -Wl,-rpath,/home/diego/Desktop/printagent/printagent/jpeg/libjpeg-turbo-main/build: libturbojpeg.so.0.2.0 -lm 

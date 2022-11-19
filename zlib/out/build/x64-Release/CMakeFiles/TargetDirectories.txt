@@ -1,0 +1,10 @@
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/zlib.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/zlibstatic.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/example.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/minigzip.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/test.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/edit_cache.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/rebuild_cache.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/list_install_components.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/install.dir
+C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/build/x64-Release/CMakeFiles/install/local.dir

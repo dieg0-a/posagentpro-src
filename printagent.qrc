@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>images/printagent_icon_big.png</file>
+        <file>images/printer_red.png</file>
+        <file>images/printer_green.png</file>
+        <file>images/http_proxy.png</file>
+        <file>images/pos_settings1.png</file>
+        <file>images/pos_settings2.png</file>
+        <file>images/windows1.png</file>
+    </qresource>
+</RCC>

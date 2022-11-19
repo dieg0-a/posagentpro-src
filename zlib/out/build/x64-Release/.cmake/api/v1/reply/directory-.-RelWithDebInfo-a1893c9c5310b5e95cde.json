@@ -1,0 +1,119 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 178,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 184,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 187,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 190,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Release/lib",
+			"paths" : 
+			[
+				"zlib.lib"
+			],
+			"targetId" : "zlib::@6890427a1f51a3e7e1df",
+			"targetIndex" : 2,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Release/bin",
+			"paths" : 
+			[
+				"zlib.dll"
+			],
+			"targetId" : "zlib::@6890427a1f51a3e7e1df",
+			"targetIndex" : 2,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Release/lib",
+			"paths" : 
+			[
+				"zlibstatic.lib"
+			],
+			"targetId" : "zlibstatic::@6890427a1f51a3e7e1df",
+			"targetIndex" : 3,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Release/include",
+			"paths" : 
+			[
+				"out/build/x64-Release/zconf.h",
+				"zlib.h"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Release/share/man/man3",
+			"paths" : 
+			[
+				"zlib.3"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Release/share/pkgconfig",
+			"paths" : 
+			[
+				"out/build/x64-Release/zlib.pc"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	}
+}

@@ -1,0 +1,13 @@
+prefix=C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Debug
+exec_prefix=C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Debug
+libdir=C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Debug/lib
+sharedlibdir=C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Debug/lib
+includedir=C:/Users/Diego/Desktop/printagent/printagent/printagent/zlib/out/install/x64-Debug/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
