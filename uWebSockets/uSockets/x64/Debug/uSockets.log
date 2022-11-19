@@ -1,0 +1,18 @@
+﻿  bsd.c
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(449,75): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(577,70): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(579,70): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(588,69): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(590,70): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+  context.c
+  loop.c
+  socket.c
+  udp.c
+  epoll_kqueue.c
+  gcd.c
+  libuv.c
+  Generando código...
+     Creando biblioteca C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\x64\Debug\uSockets.lib y objeto C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\x64\Debug\uSockets.exp
+uv_a.lib(util.c.obj) : error LNK2019: símbolo externo __imp_GetAdaptersAddresses sin resolver al que se hace referencia en la función uv_interface_addresses
+uv_a.lib(util.c.obj) : error LNK2019: símbolo externo __imp_GetUserProfileDirectoryW sin resolver al que se hace referencia en la función uv__getpwuid_r
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\x64\Debug\uSockets.dll : fatal error LNK1120: 2 externos sin resolver

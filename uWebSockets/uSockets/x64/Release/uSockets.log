@@ -1,0 +1,16 @@
+﻿  bsd.c
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(449,75): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(577,70): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(579,70): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(588,69): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\src\bsd.c(590,70): warning C4133: 'función': tipos incompatibles, de 'int *' a 'const char *'
+  context.c
+  loop.c
+  quic.c
+  socket.c
+  udp.c
+  epoll_kqueue.c
+  gcd.c
+  libuv.c
+  Generando código...
+  uSockets.vcxproj -> C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\x64\Release\uSockets.lib

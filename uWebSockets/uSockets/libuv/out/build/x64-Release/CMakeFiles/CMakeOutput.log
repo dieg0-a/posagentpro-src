@@ -1,0 +1,160 @@
+The system is: Windows - 6.3.9600 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.33.31629/bin/Hostx64/x64/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Compilador de optimización de C/C++ de Microsoft (R) versión 19.33.31630 para x64
+(C) Microsoft Corporation. Todos los derechos reservados.
+
+CMakeCCompilerId.c
+Microsoft (R) Incremental Linker Version 14.33.31630.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/out:CMakeCCompilerId.exe 
+CMakeCCompilerId.obj 
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.exe"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
+
+The C compiler identification is MSVC, found in "C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/3.23.22060601-MSVC_2/CompilerIdC/CMakeCCompilerId.exe"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_00381 && [1/2] Building C object CMakeFiles\cmTC_00381.dir\CMakeCCompilerABI.c.obj
+[2/2] Linking C executable cmTC_00381.exe
+
+
+
+Performing C SOURCE FILE Test UV_LINT_W4 succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_c0096 && [1/2] Building C object CMakeFiles\cmTC_c0096.dir\src.c.obj
+cl : Línea de comandos warning D9025 : invalidando '/W3' con '/W4'
+[2/2] Linking C executable cmTC_c0096.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_UNUSED_PARAMETER_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_6dab5 && [1/2] Building C object CMakeFiles\cmTC_6dab5.dir\src.c.obj
+[2/2] Linking C executable cmTC_6dab5.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_CONDITIONAL_CONSTANT_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_56da9 && [1/2] Building C object CMakeFiles\cmTC_56da9.dir\src.c.obj
+[2/2] Linking C executable cmTC_56da9.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_NONSTANDARD_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_e0bbe && [1/2] Building C object CMakeFiles\cmTC_e0bbe.dir\src.c.obj
+[2/2] Linking C executable cmTC_e0bbe.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_NONSTANDARD_EMPTY_TU_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_64576 && [1/2] Building C object CMakeFiles\cmTC_64576.dir\src.c.obj
+[2/2] Linking C executable cmTC_64576.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_NONSTANDARD_FILE_SCOPE_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_c39db && [1/2] Building C object CMakeFiles\cmTC_c39db.dir\src.c.obj
+[2/2] Linking C executable cmTC_c39db.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_NONSTANDARD_NONSTATIC_DLIMPORT_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_c9bde && [1/2] Building C object CMakeFiles\cmTC_c9bde.dir\src.c.obj
+[2/2] Linking C executable cmTC_c9bde.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_HIDES_LOCAL succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_d355d && [1/2] Building C object CMakeFiles\cmTC_d355d.dir\src.c.obj
+[2/2] Linking C executable cmTC_d355d.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_HIDES_PARAM succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_e2210 && [1/2] Building C object CMakeFiles\cmTC_e2210.dir\src.c.obj
+[2/2] Linking C executable cmTC_e2210.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_HIDES_GLOBAL succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_cecb9 && [1/2] Building C object CMakeFiles\cmTC_cecb9.dir\src.c.obj
+[2/2] Linking C executable cmTC_cecb9.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_CONDITIONAL_ASSIGNMENT_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_f70d5 && [1/2] Building C object CMakeFiles\cmTC_f70d5.dir\src.c.obj
+[2/2] Linking C executable cmTC_f70d5.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_NO_UNSAFE_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_fce07 && [1/2] Building C object CMakeFiles\cmTC_fce07.dir\src.c.obj
+[2/2] Linking C executable cmTC_fce07.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_WALL succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_a01d6 && [1/2] Building C object CMakeFiles\cmTC_a01d6.dir\src.c.obj
+[2/2] Linking C executable cmTC_a01d6.exe
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_UTF8_MSVC succeeded with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_5489a && [1/2] Building C object CMakeFiles\cmTC_5489a.dir\src.c.obj
+[2/2] Linking C executable cmTC_5489a.exe
+
+
+Source file was:
+int main(void) { return 0; }

@@ -1,0 +1,12 @@
+prefix=C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/install/x64-Debug
+exec_prefix=${prefix}
+libdir=C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/install/x64-Debug/lib
+includedir=C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/install/x64-Debug/include
+
+Name: libuv-static
+Version: 1.44.3
+Description: multi-platform support library with a focus on asynchronous I/O.
+URL: http://libuv.org/
+
+Libs: -L${libdir} -luv_a -lpsapi -luser32 -ladvapi32 -liphlpapi -luserenv -lws2_32
+Cflags: -I${includedir}

@@ -1,0 +1,46 @@
+Performing C SOURCE FILE Test UV_LINT_NO_UNUSED_PARAMETER failed with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_7885e && [1/2] Building C object CMakeFiles\cmTC_7885e.dir\src.c.obj
+FAILED: CMakeFiles/cmTC_7885e.dir/src.c.obj 
+C:\PROGRA~1\MICROS~1\2022\COMMUN~1\VC\Tools\MSVC\1433~1.316\bin\Hostx64\x64\cl.exe  /nologo -DUV_LINT_NO_UNUSED_PARAMETER  /DWIN32 /D_WINDOWS /W3  /Zi /Ob0 /Od /RTC1 -MDd   -Wno-unused-parameter /showIncludes /FoCMakeFiles\cmTC_7885e.dir\src.c.obj /FdCMakeFiles\cmTC_7885e.dir\ /FS -c C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\libuv\out\build\x64-Release\CMakeFiles\CMakeTmp\src.c
+cl : Línea de comandos error D8021 : argumento numérico no válido '/Wno-unused-parameter'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_STRICT_PROTOTYPES failed with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_336c1 && [1/2] Building C object CMakeFiles\cmTC_336c1.dir\src.c.obj
+FAILED: CMakeFiles/cmTC_336c1.dir/src.c.obj 
+C:\PROGRA~1\MICROS~1\2022\COMMUN~1\VC\Tools\MSVC\1433~1.316\bin\Hostx64\x64\cl.exe  /nologo -DUV_LINT_STRICT_PROTOTYPES  /DWIN32 /D_WINDOWS /W3  /Zi /Ob0 /Od /RTC1 -MDd   -Wstrict-prototypes /showIncludes /FoCMakeFiles\cmTC_336c1.dir\src.c.obj /FdCMakeFiles\cmTC_336c1.dir\ /FS -c C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\libuv\out\build\x64-Release\CMakeFiles\CMakeTmp\src.c
+cl : Línea de comandos error D8021 : argumento numérico no válido '/Wstrict-prototypes'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_LINT_EXTRA failed with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_0f898 && [1/2] Building C object CMakeFiles\cmTC_0f898.dir\src.c.obj
+FAILED: CMakeFiles/cmTC_0f898.dir/src.c.obj 
+C:\PROGRA~1\MICROS~1\2022\COMMUN~1\VC\Tools\MSVC\1433~1.316\bin\Hostx64\x64\cl.exe  /nologo -DUV_LINT_EXTRA  /DWIN32 /D_WINDOWS /W3  /Zi /Ob0 /Od /RTC1 -MDd   -Wextra /showIncludes /FoCMakeFiles\cmTC_0f898.dir\src.c.obj /FdCMakeFiles\cmTC_0f898.dir\ /FS -c C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\libuv\out\build\x64-Release\CMakeFiles\CMakeTmp\src.c
+cl : Línea de comandos error D8021 : argumento numérico no válido '/Wextra'
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+int main(void) { return 0; }
+Performing C SOURCE FILE Test UV_F_STRICT_ALIASING failed with the following output:
+Change Dir: C:/Users/Diego/Desktop/printagent/printagent/printagent/uWebSockets/uSockets/libuv/out/build/x64-Release/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_b9626 && [1/2] Building C object CMakeFiles\cmTC_b9626.dir\src.c.obj
+cl : Línea de comandos warning D9002 : se omite la opción desconocida '-fno-strict-aliasing'
+[2/2] Linking C executable cmTC_b9626.exe
+
+
+Source file was:
+int main(void) { return 0; }

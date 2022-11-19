@@ -1,0 +1,1 @@
+C:\Users\Diego\Desktop\printagent\printagent\printagent\uWebSockets\uSockets\x64\Release\uSockets.lib
