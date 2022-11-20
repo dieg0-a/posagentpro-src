@@ -190,6 +190,7 @@ int networkThread(int http_port)
         if (listen_socket) {
 //          std::cout << "Listening on port " << 9069 << std::endl;
           GlobalState::setNetworkListenSocket(listen_socket);
+          GlobalState::setNetworkLoop(uWS::Loop::get());
         }
       })
       .run();
@@ -199,7 +200,92 @@ int networkThread(int http_port)
   return 0;
 }
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#include <windows.h>
+#include <stdio.h>
+#include <tchar.h>
+#include <psapi.h>
+
+
+std::wstring GetProcessNameByID(DWORD processID)
+{
+    WCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+
+    // Get a handle to the process.
+
+    HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |
+                                   PROCESS_VM_READ,
+                                   FALSE, processID );
+
+    // Get the process name.
+
+    if (NULL != hProcess )
+    {
+        HMODULE hMod;
+        DWORD cbNeeded;
+
+        if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod),
+             &cbNeeded) )
+        {
+            GetModuleBaseNameW( hProcess, hMod, szProcessName,
+                               sizeof(szProcessName)/sizeof(WCHAR) );
+        }
+    }
+    std::wstring nameW;
+    nameW = szProcessName;
+    // Release the handle to the process.
+    CloseHandle( hProcess );
+    return nameW;
+}
+
+
+bool matchProcessName()
+{
+    // Get the list of process identifiers.
+
+    auto processID =   GetProcessId(GetCurrentProcess());
+    auto processName = GetProcessNameByID(processID);
+    auto processNameW = processName.c_str();
+
+    DWORD aProcesses[1024], cbNeeded, cProcesses;
+    unsigned int i;
+
+    if ( !EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded ) )
+    {
+        return 1;
+    }
+
+    // Calculate how many process identifiers were returned.
+
+    cProcesses = cbNeeded / sizeof(DWORD);
+
+
+
+    for ( i = 0; i < cProcesses; i++ )
+    {
+        if( aProcesses[i] != 0 )
+        {
+            if (aProcesses[i] != processID)
+            {
+                auto nameW = GetProcessNameByID(aProcesses[i]);
+                auto szProcessName = nameW.c_str();
+                if (!_tcscmp(szProcessName, processNameW )) return true;
+            }
+        }
+    }
+
+    // Compare process name with your string
+    return false;
+}
+#endif
+
 int main(int argc, char *argv[]) {
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    if (matchProcessName()) return 0;
+
+#endif
+
 //    std::thread network_thread(networkThread);
     QApplication a(argc, argv);
     MainWindow w;

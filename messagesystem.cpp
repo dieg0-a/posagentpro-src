@@ -8,6 +8,8 @@ Printer *GlobalState::selected_printer;
 bool GlobalState::network_thread_running;
 std::thread *GlobalState::network_thread;
 us_listen_socket_t *GlobalState::http_server_socket;
+std::atomic<uWS::Loop *> GlobalState::network_loop;
+
 bool GlobalState::autosave = false;
 int GlobalState::current_printer_index;
 int GlobalState::http_proxy_port = 9069;
@@ -133,19 +135,19 @@ void GlobalState::loadSettings()
             p->setPrintStandard(standard == 0 ? true : false);
         for (auto &[fname, f] : p->getFields())
         {
-            if (f.get_type() == STRING)
+            if (f->get_type() == STRING)
             {
                 std::string field;
                 if (fromSettings("printer_" + name + "_field_" + fname, field))
                     p->setString(fname, field);
             }
-            else if (f.get_type() == NUMBER)
+            else if (f->get_type() == INTEGER)
             {
                 int field;
                 if (fromSettings("printer_" + name + "_field_" + fname, field))
                     p->setInt(fname, field);
             }
-            else if(f.get_type() == COMBO_LIST)
+            else if(f->get_type() == COMBO_LIST)
             {
                 std::string field;
                 if (fromSettings("printer_" + name + "_field_" + fname, field))

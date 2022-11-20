@@ -26,6 +26,7 @@ private:
     static std::map<std::string, Printer*> printer_drivers;
     static std::thread *network_thread;
     static us_listen_socket_t *http_server_socket;
+    static std::atomic<uWS::Loop *> network_loop;
     static bool network_thread_running;
     static int http_proxy_port;
 
@@ -172,7 +173,7 @@ public:
         }
     };
 
-    static std::map<std::string, input_field> &printerGetFields() {
+    static std::map<std::string, input_field*> &printerGetFields() {
         return selected_printer->getFields();
     };
     static int printerGetInt(std::string name) {
@@ -226,16 +227,16 @@ public:
 
     static bool toSettings(const std::string &key, const std::string &value)
     {
-        str_to_settings(key,value);
+        return str_to_settings(key,value);
     }
 
     static bool toSettings(const std::string &key, int value)
     {
-        int_to_settings(key, value);
+        return int_to_settings(key, value);
     }
     static bool toSettings(const std::string &key, bool value)
     {
-        bool_to_settings(key,value);
+        return bool_to_settings(key,value);
     }
 
     static void loadSettings();
@@ -256,7 +257,8 @@ public:
             state_mutex.lock();
             if (http_server_socket != nullptr)
             {
-                us_listen_socket_close(0, http_server_socket);
+                uWS::Loop *l = network_loop;
+                if (l != nullptr) l->defer(stopNetworkLoop);
             }
             else
             {
@@ -264,17 +266,24 @@ public:
                 return;
             }
             state_mutex.unlock();
-            network_thread_running = false;
             network_thread->join();
+            network_thread_running = false;
             delete network_thread;
         }
     }
 
+    static void stopNetworkLoop() {  //Defer call to network thread!!
+         us_listen_socket_close(0, http_server_socket);
+    }
     static void setNetworkListenSocket(us_listen_socket_t *socket)
     {
         state_mutex.lock();
         http_server_socket = socket;
         state_mutex.unlock();
+    }
+
+    static void setNetworkLoop(uWS::Loop *l){
+        network_loop = l;
     }
 
     static std::vector<std::string> printerDrivers()

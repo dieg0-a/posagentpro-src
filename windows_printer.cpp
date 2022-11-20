@@ -1,5 +1,4 @@
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-
 #define NOMINMAX
 #include <windows.h>
 #include <winspool.h>
@@ -90,7 +89,7 @@ bool isPrinterOffline(CHAR *printerName){
 
 device_status PrinterWindowsSpooler::updateAndGetStatus()
 {
-    return isPrinterOffline(fields.at("Name").get_combo_selected().data()) ? DISCONNECTED : CONNECTED;
+    return isPrinterOffline(fields.at("Name")->get_combo_selected().data()) ? DISCONNECTED : CONNECTED;
 }
 
 std::vector<std::string> PrinterWindowsSpooler::enumeratePrinters()
@@ -133,7 +132,7 @@ bool PrinterWindowsSpooler::send_raw(const std::string &buffer2)
   unsigned char *lpData = new unsigned char[buffer2.size()];
   memcpy_s(lpData, buffer2.size(), buffer2.data(), buffer2.size());
 
-  auto printer_name = fields.at("Name").get_combo_selected();
+  auto printer_name = fields.at("Name")->get_combo_selected();
 
 //  char *lpData = new char[buffer2.size()];
 //  strcpy_s(lpData, buffer2.size() + 1, buffer2.c_str());

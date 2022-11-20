@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
         messagesystem.h messagesystem.cpp printercombofieldmodel.h
         printercombofieldmodel.cpp printerdriverlistmodel.h
         printerdriverlistmodel.cpp resources.cpp resources.h
+        inputfield.hpp inputfield.cpp
         printagent.qrc
 )
 

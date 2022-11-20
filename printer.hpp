@@ -14,43 +14,17 @@
 #include <vector>
 
 #include "escpos.hpp"
+#include "inputfield.hpp"
+
 
 enum device_status {CONNECTED, DISCONNECTED, NOT_FOUND};
 
 std::string to_string(const device_status &d);
 
-enum input_field_type {COMBO_LIST, STRING, NUMBER};
-
-class input_field {
-    input_field_type type;
-    int num_val;
-    std::string string_val;
-    int current_item_index;
-    std::vector<std::string> options;
-
-public:
-    input_field(const std::vector<std::string> &options, unsigned int index);
-    input_field(int val);
-    input_field(std::string string);
-
-    std::vector<std::string> &get_combo();
-    std::string get_combo_selected() const;
-    std::string &get_combo_at(int index);
-    int get_combo_index() const { return current_item_index; };
-    int get_num() const;
-    std::string get_string() const;
-    input_field_type get_type() const;
-
-    void set_num(int n){num_val = n;};
-    void set_string(std::string s){string_val = s;};
-    void set_combo(std::string &combo);
-    void set_combo(int index);
-};
-
 class Printer {
 protected:
     std::string name;
-    std::map<std::string, input_field> fields;
+    std::map<std::string, input_field*> fields;
 
     int pixel_max_width = 576; //For raster image printing
     bool cash_drawer_supported = true;
@@ -73,7 +47,7 @@ public:
     void setString(std::string name, std::string s);
     void setCombo(std::string name, std::string s);
 
-    std::map<std::string, input_field> &getFields();
+    std::map<std::string, input_field*> &getFields();
     int getInt(std::string name) const;
     std::string getString(std::string name) const;
     std::vector<std::string> &getCombo(std::string name);

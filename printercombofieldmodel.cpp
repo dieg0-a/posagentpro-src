@@ -1,8 +1,8 @@
 #include "printercombofieldmodel.h"
 
 
-PrinterComboFieldModel::PrinterComboFieldModel(input_field &combo, QObject *parent)
-    : QAbstractItemModel(parent), combo_list_field(&combo)
+PrinterComboFieldModel::PrinterComboFieldModel(combo_list_field &c, QObject *parent)
+    : QAbstractItemModel(parent), combo(&c)
 {
 }
 
@@ -15,7 +15,7 @@ QVariant PrinterComboFieldModel::headerData(int section, Qt::Orientation orienta
 QModelIndex PrinterComboFieldModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (hasIndex(row,column, parent))
-    return createIndex(row, column, &combo_list_field->get_combo_at(row));
+    return createIndex(row, column, nullptr);
     else return QModelIndex();
     // FIXME: Implement me!
 }
@@ -30,7 +30,7 @@ int PrinterComboFieldModel::rowCount(const QModelIndex &parent) const
 {
 //    if (!parent.isValid())
 //        return 0;
-    return combo_list_field->get_combo().size();
+    return combo->get_combo().size();
 
 }
 
@@ -46,6 +46,6 @@ QVariant PrinterComboFieldModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
     if (role == Qt::DisplayRole)
-    return ((std::string *)index.internalPointer())->c_str();
+    return combo->get_combo_at(index.row()).c_str();
     else return QVariant();
 }

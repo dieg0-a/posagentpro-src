@@ -9,7 +9,7 @@ class PrinterComboFieldModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    explicit PrinterComboFieldModel(input_field &combo, QObject *parent = nullptr);
+    explicit PrinterComboFieldModel(combo_list_field &combo, QObject *parent = nullptr);
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
@@ -23,7 +23,7 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    input_field *combo_list_field;
+    combo_list_field *combo;
 
 private:
 };

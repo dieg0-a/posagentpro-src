@@ -72,7 +72,7 @@ void MainWindow::updatePrintConfigWidget()
 
     for (auto &options : GlobalState::getCurrentPrinter()->getFields())
     {
-        if (options.second.get_type() == STRING)
+        if (options.second->get_type() == STRING)
         {
             auto string_field = new QWidget(p_settings_top_widget);
             auto hl = new QHBoxLayout();
@@ -91,7 +91,7 @@ void MainWindow::updatePrintConfigWidget()
             auto input = new QLineEdit(string_field);
             input->setObjectName(options.first.c_str());
             hl->addWidget(input);
-            input->setText(options.second.get_string().c_str());
+            input->setText(options.second->get_string().c_str());
 
             auto button = new QPushButton(string_field);
             hl->addWidget(button);
@@ -100,7 +100,7 @@ void MainWindow::updatePrintConfigWidget()
             connect(button, SIGNAL(clicked()), this, SLOT(setStringOption()));
             string_field->setMaximumHeight(40);
         }
-        else if (options.second.get_type() == NUMBER)
+        else if (options.second->get_type() == INTEGER)
         {
             auto number_field = new QWidget(p_settings_top_widget);
             p_settings_top_widget->layout()->addWidget(number_field);
@@ -116,7 +116,7 @@ void MainWindow::updatePrintConfigWidget()
             input->setValidator( new QIntValidator(0, 100, number_field) );
             input->setObjectName(options.first.c_str());
             number_field->layout()->addWidget(input);
-            input->setText(options.second.get_string().c_str());
+            input->setText(options.second->get_string().c_str());
 
             auto button = new QPushButton(number_field);
             number_field->layout()->addWidget(button);
@@ -125,15 +125,15 @@ void MainWindow::updatePrintConfigWidget()
             connect(button, SIGNAL(clicked()), this, SLOT(setNumberOption()));
             number_field->setMaximumHeight(50);
         }
-        else if (options.second.get_type() == COMBO_LIST)
+        else if (options.second->get_type() == COMBO_LIST)
         {
-            auto &combo = options.second;
+            combo_list_field *combo = (combo_list_field *)options.second;
             auto combo_widget = new QWidget(p_settings_top_widget);
             auto combo_field = new QComboBox(combo_widget);
             combo_field->setObjectName(options.first.c_str());
             p_settings_top_widget->layout()->addWidget(combo_widget);
-            combo_field->setModel( new PrinterComboFieldModel(combo, combo_field));
-            combo_field->setCurrentIndex(options.second.get_combo_index());
+            combo_field->setModel( new PrinterComboFieldModel(*combo, combo_field));
+            combo_field->setCurrentIndex(options.second->get_combo_index());
 
             auto hl = new QHBoxLayout();
             hl->setSpacing(0);
@@ -474,7 +474,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if (closing)
     {
         GlobalState::stopNetworkThread();
-        QMainWindow::closeEvent(event);
+        close();
+        event->accept();
     }
     else
     {

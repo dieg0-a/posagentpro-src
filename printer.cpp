@@ -7,73 +7,7 @@
 #include "messagesystem.h"
 
 
-input_field::input_field(const std::vector<std::string> &o, unsigned int index)
-{
-    options = o;
-    type = COMBO_LIST;
-    current_item_index = index < options.size() ? index : 0;
-}
-
-input_field::input_field(int val)
-{
-    num_val = val;
-    type = NUMBER;
-}
-
-
-
-input_field::input_field(std::string string)
-{
-    string_val = string;
-    type = STRING;
-}
-
-void input_field::set_combo(std::string &combo)
-{
-    for (int i = 0; i < options.size() ; i++)
-    {
-        if (options[i] == combo) current_item_index = i;
-    }
-}
-
-void input_field::set_combo(int index)
-{
-    if (index < options.size()) current_item_index = index;
-}
-
 std::string to_string(const device_status &d){return d == CONNECTED ? "connected" : "disconnected";};
-
-std::string input_field::get_string() const
-{
-    return string_val;
-}
-
-std::vector<std::string> &input_field::get_combo()
-{
-    return options;
-}
-
-std::string &input_field::get_combo_at(int index)
-{
-    if (index < options.size()) return options[index];
-    else return options[0];
-}
-
-std::string input_field::get_combo_selected() const
-{
-    return options[current_item_index];
-}
-
-
-int input_field::get_num() const
-{
-    return num_val;
-}
-
-input_field_type input_field::get_type() const
-{
-    return type;
-}
 
 device_status Printer::updateAndGetStatus() {return DISCONNECTED;}
 
@@ -94,7 +28,7 @@ bool Printer::printJPEG(const std::string &s)
 void Printer::setInt(std::string name, int i)
 {
     auto s = fields.find(name);
-    if (s != fields.end()) s->second.set_num(i);
+    if (s != fields.end()) s->second->set_int(i);
     else
     {
         std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
@@ -104,7 +38,7 @@ void Printer::setInt(std::string name, int i)
 void Printer::setString(std::string name, std::string str)
 {
     auto s = fields.find(name);
-    if (s != fields.end()) s->second.set_string(str);
+    if (s != fields.end()) s->second->set_string(str);
     else
     {
         std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
@@ -114,14 +48,14 @@ void Printer::setString(std::string name, std::string str)
 void Printer::setCombo(std::string name, std::string str)
 {
     auto s = fields.find(name);
-    if (s != fields.end()) s->second.set_combo(str);
+    if (s != fields.end()) s->second->set_combo(str);
     else
     {
         std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
     }
 }
 
-std::map<std::string, input_field> &Printer::getFields()
+std::map<std::string, input_field*> &Printer::getFields()
 {
     return fields;
 }
@@ -129,7 +63,7 @@ std::map<std::string, input_field> &Printer::getFields()
 int Printer::getInt(std::string name) const
 {
     auto s = fields.find(name);
-    if (s != fields.end()) return s->second.get_num();
+    if (s != fields.end()) return s->second->get_int();
     else
     {
         std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
@@ -140,7 +74,7 @@ int Printer::getInt(std::string name) const
 std::string Printer::getString(std::string name) const
 {
     auto s = fields.find(name);
-    if (s != fields.end()) return s->second.get_string();
+    if (s != fields.end()) return s->second->get_string();
     else
     {
         std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
@@ -153,7 +87,7 @@ std::vector<std::string> empty_str_vector;
 std::vector<std::string> &Printer::getCombo(std::string name)
 {
     auto s = fields.find(name);
-    if (s != fields.end()) return s->second.get_combo();
+    if (s != fields.end()) return s->second->get_combo();
     else
     {
         std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
@@ -170,7 +104,7 @@ bool Printer::openCashDrawer()
 PrinterWindowsSpooler::PrinterWindowsSpooler()
 {
     name = "Windows Printer";
-    fields.emplace(std::make_pair("Name", input_field(enumeratePrinters(), 0)));
+    fields.emplace(std::make_pair("Name", new combo_list_field(enumeratePrinters(), 0)));
     GlobalState::registerPrinter("Windows Printer", this);
 };
 #endif
