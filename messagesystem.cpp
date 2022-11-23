@@ -101,6 +101,7 @@ void GlobalState::processQueue()
         {
             if (raw_job_queue.front().second == JPEG)
                 selected_printer->printJPEG(raw_job_queue.front().first);
+
             else if (raw_job_queue.front().second == CASHDRAWER)
             {
                 selected_printer->openCashDrawer();
