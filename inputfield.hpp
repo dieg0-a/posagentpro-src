@@ -2,7 +2,9 @@
 #define INPUTFIELD_HPP
 #include <vector>
 #include <string>
-
+#ifdef __linux__
+#include <climits>
+#endif
 
 enum input_field_type {COMBO_LIST, STRING, INTEGER, INTEGER_RANGE};
 extern std::vector<std::string> empty_str_list;

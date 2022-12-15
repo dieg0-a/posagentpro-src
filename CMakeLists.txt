@@ -36,7 +36,7 @@ if (WIN32)
    )
 else()
     SET(OBJS
-      ${CMAKE_CURRENT_SOURCE_DIR}/uWebSockets/uSockets/uSockets.a
+#      ${CMAKE_CURRENT_SOURCE_DIR}/uWebSockets/uSockets/uSockets.a
     )
 endif()
 
@@ -75,6 +75,11 @@ else()
             add_executable(posagent WIN32 ${app_icon_resource_windows} ${OBJS}
                 ${PROJECT_SOURCES}
         )
+else()
+    add_executable(posagent ${OBJS}
+    ${PROJECT_SOURCES}
+)
+
         endif()
     endif()
 endif()
@@ -104,7 +109,7 @@ else()
     find_package(ZLIB REQUIRED)
     find_package(OpenSSL REQUIRED)
     find_package(JPEG 80 REQUIRED)
-    target_link_libraries(posagent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ZLIB::ZLIB OpenSSL::SSL JPEG::JPEG)
+    target_link_libraries(posagent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ZLIB::ZLIB OpenSSL::SSL JPEG::JPEG ${CMAKE_SOURCE_DIR}/uWebSockets/uSockets/uSockets.a)
 endif()
 
 set_target_properties(posagent PROPERTIES

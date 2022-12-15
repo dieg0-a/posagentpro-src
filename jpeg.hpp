@@ -34,13 +34,17 @@ private:
     JSAMPARRAY image_memory;
 public:
     jpeg();
-    const unsigned char * const * const image_memory_ptr() {return (const unsigned char**)image_memory;};
+    jpeg ( jpeg && );
+
+    bool isAllocated() const {return allocated;};
+
+    const unsigned char * const * const image_memory_ptr() const {return (const unsigned char**)image_memory;};
 
     bool decode(const std::string &s);
     ~jpeg();
-    inline int height(){return cinfo.output_height;};
-    inline int width(){return cinfo.output_width;};
-    inline int components(){return cinfo.output_components;};
+    inline int height() const {return cinfo.output_height;};
+    inline int width() const {return cinfo.output_width;};
+    inline int components() const {return cinfo.output_components;};
 
 };
 

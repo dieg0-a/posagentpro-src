@@ -8,6 +8,7 @@
 #include "printer.hpp"
 
 #include "App.h"
+#include "jpeg.hpp"
 
 int networkThread(int);
 
@@ -29,6 +30,8 @@ private:
     static std::atomic<uWS::Loop *> network_loop;
     static bool network_thread_running;
     static int http_proxy_port;
+
+    static jpeg *last_jpeg_receipt;
 
     ////PROGRAM SETTINGS HOOKS. TO BE SET DEPENDING ON THE FRAMERWORK/PLATFORM/GUI SPECIFIC CODE (IE: QT)
 
@@ -56,6 +59,8 @@ public:
     static std::atomic<bool> demo_mode;
     static int demo_print_jobs;
 
+    static jpeg *getLastReceipt() { return last_jpeg_receipt;};
+
     static void printerSetPixelWidth(int n){
         if (selected_printer != nullptr)
         {
@@ -63,6 +68,16 @@ public:
             if (autosave) int_to_settings("printer_" + getCurrentPrinterName() + "_pixelwidth", n);
         }
     };
+
+    static void printerSetGamma(int g){
+        if (selected_printer != nullptr)
+        {
+            selected_printer->setGamma(g);
+            if (autosave) int_to_settings("printer_" + getCurrentPrinterName() + "_gamma", g);
+        }
+    };
+
+
     static void printerSetFeedLines(int n){
         if (selected_printer != nullptr)
         {
@@ -108,6 +123,16 @@ public:
         }
         else return 0;
     };
+
+
+    static int getGamma() {
+        if (selected_printer != nullptr)
+        {
+            return selected_printer->getGamma();
+        }
+        else return 0;
+    };
+
     static int getFeedLines() {
         if (selected_printer != nullptr)
         {
@@ -382,7 +407,7 @@ public:
 
 //    static void setCurrentPrinter(Printer *p);
 
-    static void processQueue();
+    static bool processQueue();
 
     GlobalState();
 };

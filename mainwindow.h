@@ -6,8 +6,11 @@
 #include <QSystemTrayIcon>
 #include <QLabel>
 #include <QSettings>
+#include <QGraphicsScene>
 
 #include <map>
+
+#include <sstream>
 
 namespace Ui {
 class MainWindow;
@@ -57,6 +60,14 @@ public slots:
 
     void closeApplication();
 
+    void updateReceiptPreview();
+
+    void toggleDisplayPreview(bool checked);
+
+    void gammaSliderMoved(int);
+
+    void gammaSliderChanged(int);
+
 private:
     Ui::MainWindow *ui;
 //    Printer *current_printer_interface;
@@ -99,6 +110,16 @@ private:
     void updateGUIControls();
 
     bool demo_mode_last;
+
+    std::stringstream receipt_buf;
+
+    QPixmap receipt_preview_pixmap;
+    QGraphicsScene receipt_preview_scene;
+
+    bool showpreview = false;
+
+    int gamma = 240;
+
 };
 
 #endif // MAINWINDOW_H

@@ -54,6 +54,13 @@ escpos &escpos::image_from_base64_encoded_jpeg(std::string &s)
     return image_from_jpeg(decoded);
 };
 */
+
+escpos &escpos::image_from_jpeg(const jpeg &jpeg_object)
+{
+    return image_from_bitmap(jpeg_object.image_memory_ptr(), jpeg_object.width(), jpeg_object.height(), jpeg_object.components());
+}
+
+
 escpos &escpos::image_from_jpeg(const std::string &s)
 {
     jpeg image;
@@ -178,7 +185,7 @@ escpos &escpos::image_from_bitmap_demo(const unsigned char * const * const s, in
            double color = double(colorbyte)/255.0;
 
            if (color < 0.04045) color = color/12.92;
-           else color = pow((color + 0.055)/1.055, 2.6);
+           else color = pow((color + 0.055)/1.055, float(gamma) / 100.0);
 
            colorbyte = color*255.0;
            if (colorbyte > 0x20) {
@@ -334,7 +341,7 @@ escpos &escpos::image_from_bitmap(const unsigned char * const * const s, int wid
            double color = double(colorbyte)/255.0;
 
            if (color < 0.04045) color = color/12.92;
-           else color = pow((color + 0.055)/1.055, 2.6);
+           else color = pow((color + 0.055)/1.055, (float) gamma / 100.0);
 
            colorbyte = color*255.0;
            if (colorbyte > 0x20) {

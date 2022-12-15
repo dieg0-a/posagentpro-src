@@ -25,6 +25,8 @@ std::function<bool(const std::string &key, const std::string &val)> GlobalState:
 std::function<bool(const std::string &key, int val)> GlobalState::int_to_settings;
 std::function<bool(const std::string &key, bool val)> GlobalState::bool_to_settings;
 
+jpeg *GlobalState::last_jpeg_receipt = nullptr;
+
 
 #include "escpos.hpp"
 
@@ -92,15 +94,31 @@ bool GlobalState::enqueuePrintJob(std::string &rawdata, print_job_type type)
 }
 */
 
-void GlobalState::processQueue()
+bool GlobalState::processQueue()
 {
+    bool queue_empty = true;
     state_mutex.lock();
     if (selected_printer != nullptr)
     {
         while (!raw_job_queue.empty())
         {
             if (raw_job_queue.front().second == JPEG)
-                selected_printer->printJPEG(raw_job_queue.front().first);
+            {
+                queue_empty = false;
+                if (last_jpeg_receipt != nullptr)
+                {
+                    delete last_jpeg_receipt;
+                    last_jpeg_receipt = nullptr;
+                }
+                last_jpeg_receipt = new jpeg();
+                if (last_jpeg_receipt->decode(raw_job_queue.front().first))
+                    selected_printer->printJPEG(*last_jpeg_receipt);
+                else
+                {
+                    delete last_jpeg_receipt;
+                    last_jpeg_receipt = nullptr;
+                }
+            }
 
             else if (raw_job_queue.front().second == CASHDRAWER)
             {
@@ -110,6 +128,7 @@ void GlobalState::processQueue()
         }
     }
     state_mutex.unlock();
+    return !queue_empty;
 }
 
 void GlobalState::loadSettings()
@@ -131,6 +150,9 @@ void GlobalState::loadSettings()
         int pixelwidth;
         if (fromSettings("printer_" + name + "_pixelwidth", pixelwidth))
             p->setPixelWidth(pixelwidth);
+        int gamma;
+        if (fromSettings("printer_" + name + "_gamma", gamma))
+            p->setGamma(gamma);
         int standard;
         if (fromSettings("printer_" + name + "_standard", standard))
             p->setPrintStandard(standard == 0 ? true : false);

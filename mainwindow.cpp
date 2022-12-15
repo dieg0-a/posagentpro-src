@@ -11,8 +11,17 @@
 #include "printercombofieldmodel.h"
 #include <QTimer>
 #include <QCloseEvent>
+#include <math.h>
+#include <sstream>
 
 QSettings MainWindow::program_settings = QSettings("PosAgentPRO", "PosAgentPRO");
+
+
+extern int bayer_matrix[];
+
+inline double bayer(int i, int j){
+    return double(bayer_matrix[i*4 + j]) / 64.0;
+}
 
 
 void MainWindow::setHttpProxyPort(int port)
@@ -163,9 +172,109 @@ void MainWindow::updatePrintConfigWidget()
 }
 
 
+void MainWindow::updateReceiptPreview()
+{
+    int max_width = 512;
+    if (GlobalState::getLastReceipt() == nullptr) return;
+    receipt_buf.str(std::string());
+    auto s = GlobalState::getLastReceipt()->image_memory_ptr();
+    int height = GlobalState::getLastReceipt()->height();
+    int width = GlobalState::getLastReceipt()->width();
+    int bytespp = GlobalState::getLastReceipt()->components();
+        double ratio = double(width) / double(max_width);
+        int new_height = height/ratio;
+
+        short bitcounter = 0;
+        unsigned char buffer_byte = '\0';
+        for (int i = 0; i < new_height ; i++)
+        {
+           for (int j = 0; j < (max_width) ; j++)
+           {
+
+               double i_s = double(i)*ratio;
+               double j_s = double(j)*ratio;
+
+
+
+               double i_bottom_d = floor(i_s);
+               double i_top_d = ceil(i_s) <= height-1 ? ceil(i_s) : height-1;
+               double j_bottom_d = floor(j_s);
+               double j_top_d = ceil(j_s) <= width-1 ? ceil(j_s) : width-1;
+
+               int i_bottom = i_bottom_d; int i_top = i_top_d; int j_bottom = j_bottom_d; int j_top = j_top_d;
+
+
+               double dx = i_s - i_bottom_d;
+               double dy = j_s - j_bottom_d;
+
+
+
+               int colorbyte = 0;
+
+               for (int k = 0 ; k < bytespp ; k++)
+               {
+                   double c_bottom_left = s[i_bottom][(j_bottom*bytespp)+k];
+                   double c_bottom_right = s[i_bottom][(j_top*bytespp)+k];
+                   double c_top_left = s[i_top][(j_bottom*bytespp)+k];
+                   double c_top_right = s[i_top][(j_top*bytespp)+k];
+
+                   double dcdytop = c_top_right - c_top_left;
+                   double dcdybottom = c_bottom_right - c_bottom_left;
+                   double c_top = c_top_left + dcdytop*dy;
+                   double c_bottom = c_bottom_left + dcdybottom*dy;
+
+                   double dcdx = c_top - c_bottom;
+
+                   double component = c_bottom + dcdx * dx;
+                   colorbyte += component;
+               }
+               colorbyte /= bytespp;
+
+               colorbyte = colorbyte <= 0xFF ? colorbyte : 0xFF;
+               //Transform to linear RGB
+
+               double color = double(colorbyte)/255.0;
+
+               if (color < 0.04045) color = color/12.92;
+               else color = pow((color + 0.055)/1.055, (double) gamma/100.0);
+
+               colorbyte = color*255.0;
+//               if (colorbyte > 0x20) {
+                 if (bayer(i % 4, j % 4) * 255 < colorbyte) {
+                   buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
+//                 }
+               }
+//               else buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
+
+               bitcounter++;
+               if (bitcounter == 8)
+               {
+                   bitcounter = 0;
+                   receipt_buf << buffer_byte;
+                   buffer_byte = 0;
+               }
+
+           }
+       }
+
+       QImage i = QImage((unsigned char* )receipt_buf.str().c_str(), max_width, new_height, QImage::Format::Format_Mono);
+       receipt_preview_scene.clear();
+//       ui->receipt_preview_view->update();
+       receipt_preview_pixmap.convertFromImage(i);
+       receipt_preview_scene.addPixmap(receipt_preview_pixmap);
+//       receipt_preview_scene.update();
+       receipt_preview_scene.setSceneRect(receipt_preview_pixmap.rect());
+//       ui->receipt_preview_view->fitInView(receipt_preview_pixmap.rect().x(), receipt_preview_pixmap.rect().y(),
+//                                           receipt_preview_pixmap.rect().width(), ui->receipt_preview_view->height());
+//       ui->receipt_preview_view->update();
+}
+
 void MainWindow::refreshTimer()
 {
-    GlobalState::processQueue();
+    if (GlobalState::processQueue())
+    {
+        updateReceiptPreview();
+    }
     if (GlobalState::getPrinterStatus() == CONNECTED){
                 printer_status_icon_label->setPixmap(printer_status_on_icon->pixmap(16,16));
                                                     printer_status_label->setText("Printer ON ");}
@@ -176,6 +285,7 @@ void MainWindow::refreshTimer()
     if (GlobalState::demo_mode != demo_mode_last)
         setDemoMode();
 }
+
 
 
 void MainWindow::startNetworkThread()
@@ -252,6 +362,7 @@ bool MainWindow::read_bool_from_settings(const std::string &key, bool &val)
         val = v.toBool();
         return true;
     }
+    return false;
 }
 
 bool MainWindow::save_str_to_settings(const std::string &key, const std::string &val)
@@ -282,7 +393,8 @@ inline void MainWindow::updateGUIControls()
     ui->feedlines_input->setValue(GlobalState::getFeedLines());
     ui->pixel_width_input->setValue(GlobalState::getPixelWidth());
     ui->http_port_spinbox->setValue(GlobalState::getHttpPort());
-
+    gamma = GlobalState::getGamma();
+    ui->gamma_slider->setValue(gamma);
 }
 
 void MainWindow::updatePrinterDriver(int index)
@@ -333,7 +445,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setFixedSize(geometry().width(), geometry().height());
+//    setFixedSize(geometry().width(), geometry().height());
 
     minimizeAction = new QAction(tr("Mi&nimize"), this);
     connect(minimizeAction, &QAction::triggered, this, &QWidget::hide);
@@ -450,6 +562,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     else show();
 
+    ui->gamma_slider->setTracking(false);
+
 
     connect(ui->restart_network_button, SIGNAL(clicked()), this, SLOT(restartNetworkThread()));
 //    connect(ui->stop_network_button, SIGNAL(clicked()), this, SLOT(stopNetworkThread()));
@@ -462,7 +576,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->http_port_spinbox, SIGNAL(valueChanged(int)), this, SLOT(setHttpProxyPort(int)));
     connect(ui->start_in_tray, SIGNAL(stateChanged(int)), this, SLOT(setStartInTray(int)));
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+    connect(ui->show_preview_button, SIGNAL(toggled(bool)), this, SLOT(toggleDisplayPreview(bool)));
+    connect(ui->gamma_slider, SIGNAL(valueChanged(int)), this, SLOT(gammaSliderChanged(int)));
+    connect(ui->gamma_slider, SIGNAL(sliderMoved(int)), this, SLOT(gammaSliderMoved(int)));
 
+    ui->receipt_preview_view->setScene(&receipt_preview_scene);
+    receipt_preview_scene.addPixmap(receipt_preview_pixmap);
+
+    read_bool_from_settings("show_preview_window", showpreview);
+
+    ui->show_preview_button->setDown(showpreview);
+
+    toggleDisplayPreview(showpreview);
 
 
     GlobalState::startNetworkThread();
@@ -482,6 +607,34 @@ void MainWindow::closeEvent(QCloseEvent *event)
         hide();
         event->ignore();
     }
+}
+
+
+void MainWindow::toggleDisplayPreview(bool checked)
+{
+    showpreview = checked;
+    save_bool_to_settings("show_preview_window", showpreview);
+    if (!checked) ui->receipt_preview_view->hide();
+    else ui->receipt_preview_view->show();
+    ui->tabWidget->adjustSize();
+    ui->centralwidget->adjustSize();
+//    setFixedSize(geometry().width(), geometry().height());
+//    setSizePolicy(QSizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Preferred));
+    adjustSize();
+}
+
+
+void MainWindow::gammaSliderMoved(int g)
+{
+    gamma = g;
+    updateReceiptPreview();
+}
+
+void MainWindow::gammaSliderChanged(int g)
+{
+    gamma = g;
+    GlobalState::printerSetGamma(g);
+    updateReceiptPreview();
 }
 
 MainWindow::~MainWindow()

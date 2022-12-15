@@ -24,6 +24,14 @@ bool Printer::printJPEG(const std::string &s)
     return send_raw(output);
 }
 
+bool Printer::printJPEG(const jpeg &jpeg_object)
+{
+    escpos_generator.begin().image_from_jpeg(jpeg_object)
+            .feednlines(lines_to_feed_end);
+    if (paper_cut) escpos_generator.fullcut();
+    std::string output = escpos_generator.end();
+    return send_raw(output);
+}
 
 void Printer::setInt(std::string name, int i)
 {
@@ -114,14 +122,14 @@ PrinterWindowsSpooler::PrinterWindowsSpooler()
 PrinterLinuxUSBRAW::PrinterLinuxUSBRAW()
 {
     name = "Linux USB Printer";
-    fields.emplace(std::make_pair("Device", input_field("/dev/usb/lp0")));
+    fields.emplace(std::make_pair("Device", new string_field("/dev/usb/lp0")));
     GlobalState::registerPrinter(name, this);
 }
 
 PrinterLinuxUSBRAW::PrinterLinuxUSBRAW(const char *device_name)
 {
 //    device = std::string(device_name);
-    fields.emplace(std::make_pair("Device", input_field(device_name)));
+    fields.emplace(std::make_pair("Device", new string_field(device_name)));
 }
 
 device_status PrinterLinuxUSBRAW::updateAndGetStatus()
@@ -134,7 +142,7 @@ bool PrinterLinuxUSBRAW::send_raw(const std::string &buffer)
     std::fstream file;
     try {
         file.exceptions ( std::ofstream::badbit | std::ofstream::failbit );
-        file.open(fields.at("Device").get_string(), std::ios::in | std::ios::out);
+        file.open(fields.at("Device")->get_string(), std::ios::in | std::ios::out);
         file << buffer;
     }
     catch (const std::ofstream::failure& e) {

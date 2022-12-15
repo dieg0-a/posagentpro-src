@@ -81,7 +81,7 @@ GLOBAL(int)
 jpeg_initialize (struct jpeg_decompress_struct *cinfo)
 {
     jpeg_create_decompress(cinfo);
-    return 0;
+    return 1;
 }
 
 

@@ -2,6 +2,7 @@
 #define ESCPOS_HPP
 #include <cstddef>
 #include <sstream>
+#include "jpeg.hpp"
 
 
 enum printer_type {ESCPOS, STAR};
@@ -17,6 +18,8 @@ public:
     escpos &begin();
 //    escpos &image_from_base64_encoded_jpeg(std::string &s);
     escpos &image_from_jpeg(const std::string &s);
+    escpos &image_from_jpeg(const jpeg &jpeg_object);
+
     escpos &image_from_bitmap(const unsigned char * const * const s, int width, int height, int bytespp);
     escpos &image_from_bitmap_demo(const unsigned char * const * const s, int width, int height, int bytespp);
     escpos &feednlines(int n);
@@ -26,6 +29,7 @@ public:
 
     const std::string end();
     short max_width = 576;
+    int gamma = 240;
     printer_type protocol_type = ESCPOS;
 
 };
