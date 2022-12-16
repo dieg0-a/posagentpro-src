@@ -185,6 +185,7 @@ bool PrinterWindowsSpooler::send_raw(const std::string &buffer2)
 
     // Close the printer handle.
     bStatus = ClosePrinter(hPrinter);
+
   }
 
   if (!bStatus || (dwCount != dwBytesWritten)) {
@@ -192,7 +193,7 @@ bool PrinterWindowsSpooler::send_raw(const std::string &buffer2)
   } else {
     bStatus = TRUE;
   }
-
+  delete [] lpData;
   return bStatus;
 }
 
