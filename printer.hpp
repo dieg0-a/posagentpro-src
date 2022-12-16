@@ -64,8 +64,8 @@ public:
     };
 
     void setGamma(int g) {
-        if (g < 100) g = 100;
-        if (g > 300) g = 300;
+        if (g < 50) g = 50;
+        if (g > 600) g = 600;
         gamma = g;
         escpos_generator.gamma = gamma;
     };

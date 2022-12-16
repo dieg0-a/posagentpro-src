@@ -239,12 +239,12 @@ void MainWindow::updateReceiptPreview()
                else color = pow((color + 0.055)/1.055, (double) gamma/100.0);
 
                colorbyte = color*255.0;
-//               if (colorbyte > 0x20) {
+               if (colorbyte < 0xD4) {
                  if (bayer(i % 4, j % 4) * 255 < colorbyte) {
                    buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
-//                 }
+                 }
                }
-//               else buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
+               else buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
 
                bitcounter++;
                if (bitcounter == 8)
@@ -273,8 +273,9 @@ void MainWindow::refreshTimer()
 {
     if (GlobalState::processQueue())
     {
-        updateReceiptPreview();
+        if (showpreview) updateReceiptPreview();
     }
+
     if (GlobalState::getPrinterStatus() == CONNECTED){
                 printer_status_icon_label->setPixmap(printer_status_on_icon->pixmap(16,16));
                                                     printer_status_label->setText("Printer ON ");}
@@ -627,14 +628,14 @@ void MainWindow::toggleDisplayPreview(bool checked)
 void MainWindow::gammaSliderMoved(int g)
 {
     gamma = g;
-    updateReceiptPreview();
+    if (showpreview) updateReceiptPreview();
 }
 
 void MainWindow::gammaSliderChanged(int g)
 {
     gamma = g;
     GlobalState::printerSetGamma(g);
-    updateReceiptPreview();
+    if (showpreview) updateReceiptPreview();
 }
 
 MainWindow::~MainWindow()
