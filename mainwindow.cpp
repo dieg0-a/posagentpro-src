@@ -11,6 +11,7 @@
 #include "printercombofieldmodel.h"
 #include <QTimer>
 #include <QCloseEvent>
+#include <QFile>
 #include <math.h>
 #include <sstream>
 
@@ -238,11 +239,16 @@ void MainWindow::updateReceiptPreview()
                if (color < 0.04045) color = color/12.92;
                else color = pow((color + 0.055)/1.055, (double) gamma/100.0);
 
-               colorbyte = color*255.0;
-               if (colorbyte < 0xD4) {
-                 if (bayer(i % 4, j % 4) * 255 < colorbyte) {
-                   buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
-                 }
+               int colorbyte_linear = color*255.0;
+               if (colorbyte_linear < 0xAA)
+               {
+                   if (colorbyte_linear > 0x60)
+                   {
+                       if (bayer(i % 4, j % 4) * 255 < colorbyte_linear)
+                       {
+                           buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
+                       }
+                   }
                }
                else buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
 
@@ -582,7 +588,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->gamma_slider, SIGNAL(sliderMoved(int)), this, SLOT(gammaSliderMoved(int)));
 
     ui->receipt_preview_view->setScene(&receipt_preview_scene);
+
     receipt_preview_scene.addPixmap(receipt_preview_pixmap);
+
+    QFile receipt_placeholder_f = QFile(":/images/images/receipt.jpg");
+    receipt_placeholder_f.open(QFile::OpenModeFlag::ReadOnly);
+
+    auto receipt_placeholder_binary_data = receipt_placeholder_f.readAll().toStdString();
+    GlobalState::setLastReceiptImage(receipt_placeholder_binary_data);
+
+    updateReceiptPreview();
 
     read_bool_from_settings("show_preview_window", showpreview);
 

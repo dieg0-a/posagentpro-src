@@ -185,13 +185,19 @@ escpos &escpos::image_from_bitmap_demo(const unsigned char * const * const s, in
            double color = double(colorbyte)/255.0;
 
            if (color < 0.04045) color = color/12.92;
-           else color = pow((color + 0.055)/1.055, float(gamma) / 100.0);
+           else color = pow((color + 0.055)/1.055, (double) gamma/100.0);
 
-           colorbyte = color*255.0;
-           if (colorbyte < 0xD4) {
-             if (bayer(i % 4, j % 4) * 255 > colorbyte) {
-               buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
-             }
+           int colorbyte_linear = color*255.0;
+           if (colorbyte_linear < 0xAA)
+           {
+               if (colorbyte_linear > 0x60)
+               {
+                   if (bayer(i % 4, j % 4) * 255 > colorbyte_linear)
+                   {
+                       buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
+                   }
+               }
+               else buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
            }
 //           else buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
 
@@ -343,11 +349,17 @@ escpos &escpos::image_from_bitmap(const unsigned char * const * const s, int wid
            if (color < 0.04045) color = color/12.92;
            else color = pow((color + 0.055)/1.055, (float) gamma / 100.0);
 
-           colorbyte = color*255.0;
-           if (colorbyte < 0xD4) {
-             if (bayer(i % 4, j % 4) * 255 > colorbyte) {
-               buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
-             }
+           int colorbyte_linear = color*255.0;
+           if (colorbyte_linear < 0xAA)
+           {
+               if (colorbyte_linear > 0x60)
+               {
+                   if (bayer(i % 4, j % 4) * 255 > colorbyte_linear)
+                   {
+                       buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
+                   }
+               }
+               else buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
            }
 //           else buffer_byte += (unsigned char)(0x01 << (7-bitcounter));
 

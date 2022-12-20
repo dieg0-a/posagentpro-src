@@ -131,6 +131,28 @@ bool GlobalState::processQueue()
     return !queue_empty;
 }
 
+bool GlobalState::setLastReceiptImage(std::string &jpeg_data)
+{
+    bool success = false;
+    state_mutex.lock();
+    if (last_jpeg_receipt != nullptr)
+    {
+        delete last_jpeg_receipt;
+        last_jpeg_receipt = nullptr;
+    }
+    last_jpeg_receipt = new jpeg();
+    if (!last_jpeg_receipt->decode(jpeg_data))
+    {
+        delete last_jpeg_receipt;
+        last_jpeg_receipt = nullptr;
+    }
+    else success = true;
+    state_mutex.unlock();
+    return success;
+}
+
+
+
 void GlobalState::loadSettings()
 {
     int proxy_port;

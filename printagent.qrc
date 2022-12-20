@@ -7,5 +7,6 @@
         <file>images/pos_settings1.png</file>
         <file>images/pos_settings2.png</file>
         <file>images/windows1.png</file>
+        <file>images/receipt.jpg</file>
     </qresource>
 </RCC>

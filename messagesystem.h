@@ -405,6 +405,8 @@ public:
 
     static bool enqueueJPEGPrintJob(std::string &rawdata);
 
+    static bool setLastReceiptImage(std::string &jpeg_data);
+
 //    static void setCurrentPrinter(Printer *p);
 
     static bool processQueue();

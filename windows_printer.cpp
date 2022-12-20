@@ -112,7 +112,7 @@ std::vector<std::string> PrinterWindowsSpooler::enumeratePrinters()
     for (int i = 0; i < pcbreturned ; i++)
     {
         printers.push_back(pinfo[i].pPrinterName);
-        std::cout << pinfo[i].pPrinterName << std::endl;
+//        std::cout << pinfo[i].pPrinterName << std::endl;
     }
     return printers;
 }
