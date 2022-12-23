@@ -348,6 +348,7 @@ bool MainWindow::read_str_from_settings(const std::string &key, std::string &val
         val = v.toString().toStdString();
         return true;
     }
+    return false;
 }
 
 bool MainWindow::read_int_from_settings(const std::string &key, int &val)

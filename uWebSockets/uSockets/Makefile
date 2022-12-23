@@ -58,7 +58,7 @@ endif
 # By default we build the uSockets.a static library
 default:
 	rm -f *.o
-	$(CC) $(CFLAGS) -flto -O3 -c src/*.c src/eventing/*.c src/crypto/*.c
+	$(CC) $(CFLAGS) -O3 -c src/*.c src/eventing/*.c src/crypto/*.c
 # Also link in Boost Asio support
 ifeq ($(WITH_ASIO),1)
 	$(CXX) $(CXXFLAGS) -Isrc -std=c++14 -flto -O3 -c src/eventing/asio.cpp
