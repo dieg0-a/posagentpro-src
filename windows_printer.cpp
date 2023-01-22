@@ -1,7 +1,6 @@
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define NOMINMAX
-#include <windows.h>
-#include <winspool.h>
+
 
 
 #include <iostream>
@@ -9,7 +8,10 @@
 #include <fstream>
 #include <sstream>
 
-#include "printer.hpp"
+#include "windowsprinter.h"
+
+#include <windows.h>
+#include <winspool.h>
 
 
 DWORD GetVersion(HANDLE handle)

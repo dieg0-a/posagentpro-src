@@ -37,7 +37,8 @@ void MainWindow::setComboOption()
     for (auto& s : siblings)
     {
 
-        GlobalState::printerSetCombo(s->objectName().toStdString(), s->currentData(Qt::DisplayRole).toString().toStdString());
+//        GlobalState::printerSetCombo(s->objectName().toStdString(), s->currentData(Qt::DisplayRole).toString().toStdString());
+        GlobalState::printerSetCombo(s->objectName().toStdString(), s->currentIndex());
     }
     updatePrintConfigWidget();
 
@@ -605,6 +606,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->show_preview_button->setDown(showpreview);
 
     toggleDisplayPreview(showpreview);
+
+    ui->widget_standard->hide();
 
 
     GlobalState::startNetworkThread();

@@ -50,11 +50,14 @@ public:
     void setInt(std::string name, int i);
     void setString(std::string name, std::string s);
     void setCombo(std::string name, std::string s);
+    void setCombo(std::string name, int index);
+
 
     std::map<std::string, input_field*> &getFields();
     int getInt(std::string name) const;
     std::string getString(std::string name) const;
     std::vector<std::string> &getCombo(std::string name);
+    std::string getComboSelected(const std::string &name);
 
     void setPixelWidth(int n) { 
         if (n < 384) n = 384;
@@ -136,21 +139,4 @@ public:
     ~PrinterThermalLinuxTCPIP(){};
 };
 #endif
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-class PrinterWindowsSpooler : public Printer {
-private:
-    std::string name;
-public:
-    PrinterWindowsSpooler();
-    std::string getName() const {
-        return name;
-    };
-    device_status updateAndGetStatus();
-    bool send_raw(const std::string &buffer);
-    static std::vector<std::string> enumeratePrinters();
-    ~PrinterWindowsSpooler();
-};
-#endif
-
 

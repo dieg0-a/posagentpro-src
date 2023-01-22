@@ -46,6 +46,6 @@ QVariant PrinterComboFieldModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
     if (role == Qt::DisplayRole)
-    return combo->get_combo_at(index.row()).c_str();
+    return QString::fromLocal8Bit(combo->get_combo_at(index.row()).c_str());
     else return QVariant();
 }

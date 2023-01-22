@@ -134,32 +134,34 @@
                   <widget class="QWidget" name="general_settings_top_widget" native="true">
                    <layout class="QVBoxLayout" name="verticalLayout_3">
                     <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_3">
-                      <item>
-                       <widget class="QLabel" name="label">
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This settings has NO effect! Will be available in an upcoming version.&lt;/p&gt;&lt;p&gt;For now, only ESC/POS supported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>Standard</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QRadioButton" name="escpos_radio">
-                        <property name="text">
-                         <string>ESC/POS</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QRadioButton" name="star_radio">
-                        <property name="text">
-                         <string>STAR</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
+                     <widget class="QWidget" name="widget_standard" native="true">
+                      <layout class="QHBoxLayout" name="layout_standard">
+                       <item>
+                        <widget class="QLabel" name="label">
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This settings has NO effect! Will be available in an upcoming version.&lt;/p&gt;&lt;p&gt;For now, only ESC/POS supported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="text">
+                          <string>Standard</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QRadioButton" name="escpos_radio">
+                         <property name="text">
+                          <string>ESC/POS</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QRadioButton" name="star_radio">
+                         <property name="text">
+                          <string>STAR</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
                     </item>
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_5">

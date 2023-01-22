@@ -63,6 +63,17 @@ void Printer::setCombo(std::string name, std::string str)
     }
 }
 
+void Printer::setCombo(std::string name, int index)
+{
+    auto s = fields.find(name);
+    if (s != fields.end()) s->second->set_combo(index);
+    else
+    {
+        std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
+    }
+}
+
+
 std::map<std::string, input_field*> &Printer::getFields()
 {
     return fields;
@@ -103,19 +114,24 @@ std::vector<std::string> &Printer::getCombo(std::string name)
     }
 }
 
+std::string Printer::getComboSelected(const std::string &name)
+{
+    auto s = fields.find(name);
+    if (s != fields.end()) return s->second->get_combo_selected();
+    else
+    {
+        std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
+        return "";
+    }
+
+}
+
+
 bool Printer::openCashDrawer()
 {
     return (cash_drawer_supported) ? send_raw(escpos_generator.begin().cashdrawer().end()) : true;
 }
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-PrinterWindowsSpooler::PrinterWindowsSpooler()
-{
-    name = "Windows Printer";
-    fields.emplace(std::make_pair("Name", new combo_list_field(enumeratePrinters(), 0)));
-    GlobalState::registerPrinter("Windows Printer", this);
-};
-#endif
 
 #ifdef __linux__
 

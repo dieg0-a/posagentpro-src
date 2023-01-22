@@ -6,9 +6,12 @@
 
 #include <mutex>
 #include "printer.hpp"
+#include "windowsprinter.h"
 
 #include "App.h"
 #include "jpeg.hpp"
+
+
 
 int networkThread(int);
 
@@ -48,6 +51,7 @@ private:
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
     static PrinterWindowsSpooler winprint;
 #endif
+
 #ifdef __linux__
     static PrinterLinuxUSBRAW linux_usb_print;
 #endif
@@ -197,6 +201,16 @@ public:
                 str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name, s);
         }
     };
+
+    static void printerSetCombo(std::string name, int index) {
+        if (selected_printer != nullptr)
+        {
+            selected_printer->setCombo(name,index);
+            if (autosave)
+                str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name, selected_printer->getComboSelected(name));
+        }
+    };
+
 
     static std::map<std::string, input_field*> &printerGetFields() {
         return selected_printer->getFields();
