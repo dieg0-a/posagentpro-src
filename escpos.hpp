@@ -5,8 +5,6 @@
 #include "jpeg.hpp"
 
 
-enum printer_type {ESCPOS, STAR};
-
 class escpos
 {
 private:
@@ -30,8 +28,7 @@ public:
     const std::string end();
     short max_width = 576;
     int gamma = 240;
-    printer_type protocol_type = ESCPOS;
-
+    std::string protocol_type = "escpos";
 };
 
 

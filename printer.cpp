@@ -11,27 +11,10 @@ std::string to_string(const device_status &d){return d == CONNECTED ? "connected
 
 device_status Printer::updateAndGetStatus() {return DISCONNECTED;}
 
+bool Printer::printJPEG(const std::string &s){return true;};
+bool Printer::printJPEG(const jpeg &jpeg_object){return true;};
+
 device_status PrinterDummy::updateAndGetStatus(){return CONNECTED;};
-
-bool Printer::send_raw(const std::string &) {return true;}  //Send length bytes of data to the printer
-
-bool Printer::printJPEG(const std::string &s)
-{
-    escpos_generator.begin().image_from_jpeg(s)
-            .feednlines(lines_to_feed_end);
-    if (paper_cut) escpos_generator.fullcut();
-    std::string output = escpos_generator.end();
-    return send_raw(output);
-}
-
-bool Printer::printJPEG(const jpeg &jpeg_object)
-{
-    escpos_generator.begin().image_from_jpeg(jpeg_object)
-            .feednlines(lines_to_feed_end);
-    if (paper_cut) escpos_generator.fullcut();
-    std::string output = escpos_generator.end();
-    return send_raw(output);
-}
 
 void Printer::setInt(std::string name, int i)
 {
@@ -53,20 +36,10 @@ void Printer::setString(std::string name, std::string str)
     }
 }
 
-void Printer::setCombo(std::string name, std::string str)
+void Printer::setIndex(std::string name, int index)
 {
     auto s = fields.find(name);
-    if (s != fields.end()) s->second->set_combo(str);
-    else
-    {
-        std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
-    }
-}
-
-void Printer::setCombo(std::string name, int index)
-{
-    auto s = fields.find(name);
-    if (s != fields.end()) s->second->set_combo(index);
+    if (s != fields.end()) s->second->set_index(index);
     else
     {
         std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
@@ -103,10 +76,10 @@ std::string Printer::getString(std::string name) const
 
 std::vector<std::string> empty_str_vector;
 
-std::vector<std::string> &Printer::getCombo(std::string name)
+std::vector<std::string> &Printer::getListOfStrings(std::string name)
 {
     auto s = fields.find(name);
-    if (s != fields.end()) return s->second->get_combo();
+    if (s != fields.end()) return s->second->get_list_of_str();
     else
     {
         std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
@@ -114,39 +87,66 @@ std::vector<std::string> &Printer::getCombo(std::string name)
     }
 }
 
-std::string Printer::getComboSelected(const std::string &name)
-{
-    auto s = fields.find(name);
-    if (s != fields.end()) return s->second->get_combo_selected();
-    else
-    {
-        std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
-        return "";
-    }
-
-}
 
 
 bool Printer::openCashDrawer()
 {
+    return cash_drawer_supported;
+}
+
+bool PrinterRaw::send_raw(const std::string &) {return true;}  //Send length bytes of data to the printer
+
+bool PrinterRaw::printJPEG(const std::string &s)
+{
+    escpos_generator.begin().image_from_jpeg(s)
+        .feednlines(lines_to_feed_end());
+    if (paper_cut()) escpos_generator.fullcut();
+    std::string output = escpos_generator.end();
+    return send_raw(output);
+}
+
+bool PrinterRaw::printJPEG(const jpeg &jpeg_object)
+{
+    escpos_generator.begin().image_from_jpeg(jpeg_object)
+        .feednlines(lines_to_feed_end());
+    if (paper_cut()) escpos_generator.fullcut();
+    std::string output = escpos_generator.end();
+    return send_raw(output);
+}
+
+bool PrinterRaw::openCashDrawer()
+{
     return (cash_drawer_supported) ? send_raw(escpos_generator.begin().cashdrawer().end()) : true;
+}
+
+PrinterRaw::PrinterRaw()
+{
+    name = "Abstract RAW Printer";
+    fields.emplace(std::make_pair("lines_to_feed", new integer_range_field("Feed Lines",0, 0, 20, "spinbox")));
+    fields.emplace(std::make_pair("paper_cut", new integer_field("Cut Paper", 0)));
+    fields.emplace(std::make_pair("max_width", new integer_range_field("Max Width", 576, 384, 576, "slider")));
+    fields.emplace(std::make_pair("gamma", new integer_range_field("Gamma", 2400, 500, 4000, "slider")));
+
+    std::vector<std::string> protocol_type;
+    protocol_type.emplace(protocol_type.end(), std::string("escpos"));
+    protocol_type.emplace(protocol_type.end(), std::string("star"));
+
+    fields.emplace(std::make_pair("protocol_type", new string_combo_list_field("Protocol", std::move(protocol_type), 0)));
+
+
+//    fields.emplace(std::make_pair("protocol_type", new string_combo_list_field(std::vector<std::string, int>())));
 }
 
 
 #ifdef __linux__
 
-PrinterLinuxUSBRAW::PrinterLinuxUSBRAW()
+PrinterLinuxUSBRAW::PrinterLinuxUSBRAW() : PrinterRaw()
 {
     name = "Linux USB Printer";
-    fields.emplace(std::make_pair("Device", new string_field("/dev/usb/lp0")));
+    fields.emplace(std::make_pair("Device", new string_field("Device", "/dev/usb/lp0")));
     GlobalState::registerPrinter(name, this);
 }
 
-PrinterLinuxUSBRAW::PrinterLinuxUSBRAW(const char *device_name)
-{
-//    device = std::string(device_name);
-    fields.emplace(std::make_pair("Device", new string_field(device_name)));
-}
 
 device_status PrinterLinuxUSBRAW::updateAndGetStatus()
 {
@@ -171,10 +171,18 @@ bool PrinterLinuxUSBRAW::send_raw(const std::string &buffer)
 }
 
 
-PrinterThermalLinuxTCPIP::PrinterThermalLinuxTCPIP(const std::string &_address, uint _port) : address(_address), port(_port)
+PrinterThermalLinuxTCPIP::PrinterThermalLinuxTCPIP()
 {
+    name = "Linux TCP/IP Printer";
+    fields.emplace(std::make_pair("Address", new string_field("Address", "127.0.0.1")));
+    fields.emplace(std::make_pair("Port", new string_field("Port", std::to_string(9100))));
+    GlobalState::registerPrinter(name, this);
+}
 
-
+PrinterThermalLinuxTCPIP::PrinterThermalLinuxTCPIP(const std::string &_address, uint _port)
+{
+    fields.emplace(std::make_pair("Address", new string_field("Address", _address)));
+    fields.emplace(std::make_pair("Port", new string_field("Port", std::to_string(_port))));
 }
 
 bool PrinterThermalLinuxTCPIP::connectToPrinter()
@@ -183,11 +191,11 @@ bool PrinterThermalLinuxTCPIP::connectToPrinter()
         printf("\n Socket creation error \n");
     }
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(port);
+    serv_addr.sin_port = htons(port());
 
     // Convert IPv4 and IPv6 addresses from text to binary
     // form
-    if (inet_pton(AF_INET, address.c_str(), &serv_addr.sin_addr)
+    if (inet_pton(AF_INET, address().c_str(), &serv_addr.sin_addr)
         <= 0) {
         printf(
             "\nInvalid address/ Address not supported \n");

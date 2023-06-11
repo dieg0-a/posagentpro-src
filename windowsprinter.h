@@ -6,18 +6,18 @@
 
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-class PrinterWindowsSpooler : public Printer {
+class PrinterWindowsRawSpooler : public PrinterRaw {
 private:
     std::string name;
 public:
-    PrinterWindowsSpooler();
+    PrinterWindowsRawSpooler();
     std::string getName() const {
         return name;
     };
     device_status updateAndGetStatus();
     bool send_raw(const std::string &buffer);
     static std::vector<std::string> enumeratePrinters();
-    ~PrinterWindowsSpooler();
+    ~PrinterWindowsRawSpooler();
 };
 #endif
 

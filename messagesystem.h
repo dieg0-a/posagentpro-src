@@ -54,6 +54,7 @@ private:
 
 #ifdef __linux__
     static PrinterLinuxUSBRAW linux_usb_print;
+    static PrinterThermalLinuxTCPIP linux_ip_print;
 #endif
 
 
@@ -65,93 +66,7 @@ public:
 
     static jpeg *getLastReceipt() { return last_jpeg_receipt;};
 
-    static void printerSetPixelWidth(int n){
-        if (selected_printer != nullptr)
-        {
-            selected_printer->setPixelWidth(n);
-            if (autosave) int_to_settings("printer_" + getCurrentPrinterName() + "_pixelwidth", n);
-        }
-    };
-
-    static void printerSetGamma(int g){
-        if (selected_printer != nullptr)
-        {
-            selected_printer->setGamma(g);
-            if (autosave) int_to_settings("printer_" + getCurrentPrinterName() + "_gamma", g);
-        }
-    };
-
-
-    static void printerSetFeedLines(int n){
-        if (selected_printer != nullptr)
-        {
-            selected_printer->setFeedLines(n);
-            if (autosave)
-            {
-                std::string str = "printer_";
-                str += getCurrentPrinterName();
-                str += "_feedlines";
-                int_to_settings(str, n);
-            }
-        }
-    };
-    static void printerSetPrintStandard(bool escpos_toggled){
-        if (selected_printer != nullptr)
-        {
-            selected_printer->setPrintStandard(escpos_toggled);
-            if (autosave) int_to_settings("printer_" + getCurrentPrinterName() + "_standard", escpos_toggled ? 0 : 1);
-        }
-    };
-    static void printerSetCashDrawerEnabled(bool state){
-        if (selected_printer != nullptr)
-        {
-            selected_printer->setCashDrawerEnabled(state);
-            if (autosave) bool_to_settings("printer_" + getCurrentPrinterName() + "_cdrawer", state);
-        }
-    };
-    static void printerSetCutterEnabled(int state){
-        if (selected_printer != nullptr)
-        {
-            selected_printer->setCutterEnabled(state);
-            if (autosave) int_to_settings("printer_" + getCurrentPrinterName() + "_cutter", state);
-
-        }
-    };
-
     static int getHttpPort() {return http_proxy_port;};
-
-    static int getPixelWidth() {
-        if (selected_printer != nullptr)
-        {
-            return selected_printer->getPixelWidth();
-        }
-        else return 0;
-    };
-
-
-    static int getGamma() {
-        if (selected_printer != nullptr)
-        {
-            return selected_printer->getGamma();
-        }
-        else return 0;
-    };
-
-    static int getFeedLines() {
-        if (selected_printer != nullptr)
-        {
-            return selected_printer->getFeedLines();
-        }
-        else return 0;
-    };
-
-    static int getPrintStandard() {
-        if (selected_printer != nullptr)
-        {
-            return selected_printer->getPrintStandard();
-        }
-        else return 0;
-    };
 
 
     static bool getCashDrawerEnabled() {
@@ -161,15 +76,6 @@ public:
         }
         else return 0;
     };
-
-    static int getCutterEnabled() {
-        if (selected_printer != nullptr)
-        {
-            return selected_printer->getCutterEnabled();
-        }
-        else return 0;
-    };
-
 
     static void printerSetName(const std::string &n) {
         state_mutex.lock();
@@ -193,21 +99,13 @@ public:
                 str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name, s);
         }
     };
-    static void printerSetCombo(std::string name, std::string s) {
-        if (selected_printer != nullptr)
-        {
-            selected_printer->setCombo(name,s);
-            if (autosave)
-                str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name, s);
-        }
-    };
 
-    static void printerSetCombo(std::string name, int index) {
+    static void printerSetIndex(std::string name, int index) {
         if (selected_printer != nullptr)
         {
-            selected_printer->setCombo(name,index);
+            selected_printer->setIndex(name,index);
             if (autosave)
-                str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name, selected_printer->getComboSelected(name));
+                str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name, selected_printer->getString(name));
         }
     };
 
@@ -221,8 +119,8 @@ public:
     static std::string printerGetString(std::string name) {
         return selected_printer->getString(name);
     };
-    static std::vector<std::string> &printerGetCombo(std::string name) {
-        return selected_printer->getCombo(name);
+    static std::vector<std::string> &printerGetStrList(std::string name) {
+        return selected_printer->getListOfStrings(name);
     };
 
     static void setHttpPort(int port)
@@ -371,6 +269,7 @@ public:
                 return;
             }
             i++;
+            p++;
         }
         if (autosave)
             str_to_settings("current_printer_driver",  getCurrentPrinterName());

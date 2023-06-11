@@ -23,6 +23,7 @@
  */
 
 #include "base64.hpp"
+#include <cstdint>
 
 
 namespace base64{

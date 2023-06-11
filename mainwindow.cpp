@@ -38,7 +38,7 @@ void MainWindow::setComboOption()
     {
 
 //        GlobalState::printerSetCombo(s->objectName().toStdString(), s->currentData(Qt::DisplayRole).toString().toStdString());
-        GlobalState::printerSetCombo(s->objectName().toStdString(), s->currentIndex());
+        GlobalState::printerSetIndex(s->objectName().toStdString(), s->currentIndex());
     }
     updatePrintConfigWidget();
 
@@ -56,17 +56,22 @@ void MainWindow::setStringOption()
     updatePrintConfigWidget();
 }
 
-void MainWindow::setNumberOption()
+void MainWindow::setIntOption()
 {
     auto j = qobject_cast<QPushButton*>(sender());
     auto siblings = j->parent()->findChildren<QLineEdit *>();
     for (auto &s : siblings)
     {
-
         GlobalState::printerSetInt(s->objectName().toStdString(), s->text().toInt());
     }
     updatePrintConfigWidget();
 }
+
+void MainWindow::optionSliderReleased(){
+    auto j = qobject_cast<QSlider*>(sender());
+    GlobalState::printerSetInt(j->objectName().toStdString(), j->value());
+}
+
 
 
 void MainWindow::updatePrintConfigWidget()
@@ -95,7 +100,7 @@ void MainWindow::updatePrintConfigWidget()
 
             auto label = new QLabel(string_field);
             hl->addWidget(label);
-            label->setText(options.first.c_str());
+            label->setText(options.second->name().c_str());
             label->setMaximumWidth(70);
             label->setMinimumWidth(70);
 
@@ -119,7 +124,7 @@ void MainWindow::updatePrintConfigWidget()
 
             auto label = new QLabel(number_field);
             number_field->layout()->addWidget(label);
-            label->setText(options.first.c_str());
+            label->setText(options.second->name().c_str());
             label->setMaximumWidth(70);
             label->setMinimumWidth(70);
 
@@ -127,24 +132,67 @@ void MainWindow::updatePrintConfigWidget()
             input->setValidator( new QIntValidator(0, 100, number_field) );
             input->setObjectName(options.first.c_str());
             number_field->layout()->addWidget(input);
-            input->setText(options.second->get_string().c_str());
+            input->setText(QString::number(options.second->get_int()));
 
             auto button = new QPushButton(number_field);
             number_field->layout()->addWidget(button);
             button->setText("Set");
             button->setMaximumWidth(40);
-            connect(button, SIGNAL(clicked()), this, SLOT(setNumberOption()));
+            connect(button, SIGNAL(clicked()), this, SLOT(setIntOption()));
             number_field->setMaximumHeight(50);
         }
-        else if (options.second->get_type() == COMBO_LIST)
+        else if (options.second->get_type() == INTEGER_RANGE)
         {
-            combo_list_field *combo = (combo_list_field *)options.second;
+            integer_range_field *r = (integer_range_field*)options.second;
+            auto number_field = new QWidget(p_settings_top_widget);
+            p_settings_top_widget->layout()->addWidget(number_field);
+            number_field->setLayout(new QHBoxLayout());
+
+            auto label = new QLabel(number_field);
+            number_field->layout()->addWidget(label);
+            label->setText(options.second->name().c_str());
+            label->setMaximumWidth(70);
+            label->setMinimumWidth(70);
+
+            if (r->get_widget_type() == "lineedit")
+            {
+                auto input = new QLineEdit(number_field);
+                input->setValidator( new QIntValidator(r->getRange().first, r->getRange().second, number_field) );
+                input->setObjectName(options.first.c_str());
+                number_field->layout()->addWidget(input);
+                input->setText(QString::number(options.second->get_int()));
+            }
+            else if (r->get_widget_type() == "spinbox")
+            {
+                auto input = new QSpinBox(number_field);
+                input->setRange(r->getRange().first, r->getRange().second);
+                input->setValue(options.second->get_int());
+                input->setObjectName(options.first.c_str());
+                number_field->layout()->addWidget(input);
+            }
+            else if (r->get_widget_type() == "slider")
+            {
+                auto input = new QSlider(Qt::Orientation::Horizontal, number_field);
+                input->setRange(r->getRange().first, r->getRange().second);
+                input->setValue(options.second->get_int());
+                input->setObjectName(options.first.c_str());
+                number_field->layout()->addWidget(input);
+                auto label = new QLabel(number_field);
+                number_field->layout()->addWidget(label);
+                label->setText(QString::number(options.second->get_int()));
+                connect(input,SIGNAL(valueChanged(int)), label, SLOT(setNum(int)));
+                connect(input, SIGNAL(sliderReleased()), this, SLOT(optionSliderReleased()));
+            }
+        }
+        else if (options.second->get_type() == COMBO_LIST_STRING)
+        {
+            string_combo_list_field *combo = (string_combo_list_field *)options.second;
             auto combo_widget = new QWidget(p_settings_top_widget);
             auto combo_field = new QComboBox(combo_widget);
             combo_field->setObjectName(options.first.c_str());
             p_settings_top_widget->layout()->addWidget(combo_widget);
-            combo_field->setModel( new PrinterComboFieldModel(*combo, combo_field));
-            combo_field->setCurrentIndex(options.second->get_combo_index());
+            combo_field->setModel( new StringComboListModel(*combo, combo_field));
+            combo_field->setCurrentIndex(options.second->get_index());
 
             auto hl = new QHBoxLayout();
             hl->setSpacing(0);
@@ -154,7 +202,7 @@ void MainWindow::updatePrintConfigWidget()
 
             auto label = new QLabel(combo_widget);
             hl->addWidget(label);
-            label->setText(options.first.c_str());
+            label->setText(options.second->name().c_str());
             label->setMaximumWidth(70);
             label->setMinimumWidth(70);
 
@@ -312,33 +360,6 @@ void MainWindow::restartNetworkThread()
     GlobalState::startNetworkThread();
 }
 
-void MainWindow::setPixelWidth(int w)
-{
-    GlobalState::printerSetPixelWidth(w);
-}
-
-
-
-void MainWindow::setFeedLines(int n)
-{
-    GlobalState::printerSetFeedLines(n);
-}
-
-
-void MainWindow::setPrintStandard(bool escpos_toggled)
-{
-    GlobalState::printerSetPrintStandard(escpos_toggled);
-}
-
-void MainWindow::setCashDrawerEnabled(int state)
-{
-    GlobalState::printerSetCashDrawerEnabled(state == Qt::CheckState::Checked ? true : false);
-}
-
-void MainWindow::setCutterEnabled(int state)
-{
-    GlobalState::printerSetCutterEnabled(state);
-}
 
 
 bool MainWindow::read_str_from_settings(const std::string &key, std::string &val)
@@ -395,15 +416,7 @@ bool MainWindow::save_bool_to_settings(const std::string &key, bool val)
 
 inline void MainWindow::updateGUIControls()
 {
-    ui->escpos_radio->setChecked(GlobalState::getPrintStandard() == 0 ?  true : false);
-    ui->star_radio->setChecked(GlobalState::getPrintStandard() == 0 ?  false : true);
-    ui->enable_cash_drawer_check->setChecked(GlobalState::getCashDrawerEnabled());
-    ui->enable_cutter_check->setChecked(GlobalState::getCutterEnabled());
-    ui->feedlines_input->setValue(GlobalState::getFeedLines());
-    ui->pixel_width_input->setValue(GlobalState::getPixelWidth());
     ui->http_port_spinbox->setValue(GlobalState::getHttpPort());
-    gamma = GlobalState::getGamma();
-    ui->gamma_slider->setValue(gamma);
 }
 
 void MainWindow::updatePrinterDriver(int index)
@@ -490,12 +503,6 @@ MainWindow::MainWindow(QWidget *parent) :
                                   save_int_to_settings, save_bool_to_settings);
     GlobalState::loadSettings();
 
-    ui->pixel_width_input->setMinimum(384);
-    ui->pixel_width_input->setMaximum(768);
-
-    ui->feedlines_input->setMinimum(0);
-    ui->feedlines_input->setMaximum(20);
-
     updateGUIControls();
 
     GlobalState::autosave = true;
@@ -571,23 +578,14 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     else show();
 
-    ui->gamma_slider->setTracking(false);
-
 
     connect(ui->restart_network_button, SIGNAL(clicked()), this, SLOT(restartNetworkThread()));
 //    connect(ui->stop_network_button, SIGNAL(clicked()), this, SLOT(stopNetworkThread()));
-    connect(ui->enable_cash_drawer_check, SIGNAL(stateChanged(int)), this, SLOT(setCashDrawerEnabled(int)));
-    connect(ui->enable_cutter_check, SIGNAL(stateChanged(int)), this, SLOT(setCutterEnabled(int)));
-    connect(ui->escpos_radio, SIGNAL(toggled(bool)), this, SLOT(setPrintStandard(bool)));
-    connect(ui->feedlines_input, SIGNAL(valueChanged(int)), this, SLOT(setFeedLines(int)));
-    connect(ui->pixel_width_input, SIGNAL(valueChanged(int)), this, SLOT(setPixelWidth(int)));
     connect(ui->printer_driver_combo, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePrinterDriver(int)));
     connect(ui->http_port_spinbox, SIGNAL(valueChanged(int)), this, SLOT(setHttpProxyPort(int)));
     connect(ui->start_in_tray, SIGNAL(stateChanged(int)), this, SLOT(setStartInTray(int)));
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     connect(ui->show_preview_button, SIGNAL(toggled(bool)), this, SLOT(toggleDisplayPreview(bool)));
-    connect(ui->gamma_slider, SIGNAL(valueChanged(int)), this, SLOT(gammaSliderChanged(int)));
-    connect(ui->gamma_slider, SIGNAL(sliderMoved(int)), this, SLOT(gammaSliderMoved(int)));
 
     ui->receipt_preview_view->setScene(&receipt_preview_scene);
 
@@ -606,9 +604,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->show_preview_button->setDown(showpreview);
 
     toggleDisplayPreview(showpreview);
-
-    ui->widget_standard->hide();
-
 
     GlobalState::startNetworkThread();
     t->start();
@@ -643,19 +638,6 @@ void MainWindow::toggleDisplayPreview(bool checked)
     adjustSize();
 }
 
-
-void MainWindow::gammaSliderMoved(int g)
-{
-    gamma = g;
-    if (showpreview) updateReceiptPreview();
-}
-
-void MainWindow::gammaSliderChanged(int g)
-{
-    gamma = g;
-    GlobalState::printerSetGamma(g);
-    if (showpreview) updateReceiptPreview();
-}
 
 MainWindow::~MainWindow()
 {

@@ -37,6 +37,7 @@ jpeg *GlobalState::last_jpeg_receipt = nullptr;
 
 #ifdef __linux__
     PrinterLinuxUSBRAW GlobalState::linux_usb_print;
+    PrinterThermalLinuxTCPIP GlobalState::linux_ip_print;
 #endif
 
 
@@ -161,24 +162,6 @@ void GlobalState::loadSettings()
         http_proxy_port = proxy_port;
     for (auto &[name, p] : printer_drivers)
     {
-        bool cashdrawer;
-        if (fromSettings("printer_" + name + "_cdrawer", cashdrawer))
-            p->setCashDrawerEnabled(cashdrawer);
-        bool cutter;
-        if (fromSettings("printer_" + name + "_cutter", cutter))
-            p->setCutterEnabled(cutter);
-        int feedlines;
-        if (fromSettings("printer_" + name + "_feedlines", feedlines))
-            p->setFeedLines(feedlines);
-        int pixelwidth;
-        if (fromSettings("printer_" + name + "_pixelwidth", pixelwidth))
-            p->setPixelWidth(pixelwidth);
-        int gamma;
-        if (fromSettings("printer_" + name + "_gamma", gamma))
-            p->setGamma(gamma);
-        int standard;
-        if (fromSettings("printer_" + name + "_standard", standard))
-            p->setPrintStandard(standard == 0 ? true : false);
         for (auto &[fname, f] : p->getFields())
         {
             if (f->get_type() == STRING)
@@ -193,11 +176,17 @@ void GlobalState::loadSettings()
                 if (fromSettings("printer_" + name + "_field_" + fname, field))
                     p->setInt(fname, field);
             }
-            else if(f->get_type() == COMBO_LIST)
+            else if (f->get_type() == INTEGER_RANGE)
+            {
+                int field;
+                if (fromSettings("printer_" + name + "_field_" + fname, field))
+                    p->setInt(fname, field);
+            }
+            else if(f->get_type() == COMBO_LIST_STRING)
             {
                 std::string field;
                 if (fromSettings("printer_" + name + "_field_" + fname, field))
-                    p->setCombo(fname, field);
+                    p->setString(fname, field);
             }
         }
     }

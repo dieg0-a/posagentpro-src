@@ -1,15 +1,15 @@
-#ifndef PRINTERCOMBOFIELDMODEL_H
-#define PRINTERCOMBOFIELDMODEL_H
+#ifndef STRINGCOMBOLISTMODEL_H
+#define STRINGCOMBOLISTMODEL_H
 
 #include <QAbstractItemModel>
 #include "printer.hpp"
 
-class PrinterComboFieldModel : public QAbstractItemModel
+class StringComboListModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit PrinterComboFieldModel(combo_list_field &combo, QObject *parent = nullptr);
+    explicit StringComboListModel(string_combo_list_field &combo, QObject *parent = nullptr);
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
@@ -23,9 +23,10 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    combo_list_field *combo;
+    string_combo_list_field *combo;
 
 private:
 };
 
-#endif // PRINTERCOMBOFIELDMODEL_H
+#endif // STRINGCOMBOLISTMODEL_H
+

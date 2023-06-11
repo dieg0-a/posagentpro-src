@@ -31,7 +31,9 @@ public:
 public slots:
     void setComboOption();
     void setStringOption();
-    void setNumberOption();
+    void setIntOption();
+
+    void optionSliderReleased();
 
     void updatePrintConfigWidget();
 
@@ -41,12 +43,6 @@ public slots:
     void stopNetworkThread();
 
     void restartNetworkThread();
-
-    void setPixelWidth(int);
-    void setFeedLines(int);
-    void setPrintStandard(bool escpos_toggled);
-    void setCashDrawerEnabled(int state);
-    void setCutterEnabled(int state);
 
     void updatePrinterDriver(int index);
 
@@ -63,10 +59,6 @@ public slots:
     void updateReceiptPreview();
 
     void toggleDisplayPreview(bool checked);
-
-    void gammaSliderMoved(int);
-
-    void gammaSliderChanged(int);
 
 private:
     Ui::MainWindow *ui;
