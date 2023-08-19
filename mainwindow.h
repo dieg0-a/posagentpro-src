@@ -7,16 +7,20 @@
 #include <QLabel>
 #include <QSettings>
 #include <QGraphicsScene>
+#include <QPrinter>
+#include "object.hpp"
 
 #include <map>
 
 #include <sstream>
 
+#include "eventclient.h"
+
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, Object
 {
     Q_OBJECT
 
@@ -26,39 +30,39 @@ protected:
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
+    static MainWindow *active_window;
+    
+    EventClient eventclient;
+
+
     ~MainWindow();
+
+    void onEvent(EventData d);
 
 public slots:
     void setComboOption();
     void setStringOption();
     void setIntOption();
-
-    void optionSliderReleased();
-
+    void optionSliderReleased(int value);
+    void optionCheckBoxToggled(int value);
+    void optionTextChanged(const QString &text);
+    void optionComboChanged(const QString &text);
+    void optionButtonClicked();
     void updatePrintConfigWidget();
-
     void refreshTimer();
-
     void startNetworkThread();
     void stopNetworkThread();
-
     void restartNetworkThread();
-
     void updatePrinterDriver(int index);
-
     void setHttpProxyPort(int port);
-
     void setStartInTray(int state);
-
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
-
     void setDemoMode();
-
     void closeApplication();
-
     void updateReceiptPreview();
-
     void toggleDisplayPreview(bool checked);
+    void scheduleDiplayPreviewUpdate();
+    void paintPrintPreview(QPrinter *printer);
 
 private:
     Ui::MainWindow *ui;
@@ -76,16 +80,16 @@ private:
     QSystemTrayIcon *trayIcon;
 
     QWidget *printer_status_widget;
+    QWidget *demo_mode_widget;
 
     QLabel *printer_status_label;
+    QLabel *printer_status_icon_label;
+    QLabel *demo_mode_on_off;
+
     QIcon *printer_status_on_icon;
     QIcon *printer_status_off_icon;
 
-    QLabel *printer_status_icon_label;
-
-
-    QWidget *demo_mode_widget;
-    QLabel *demo_mode_on_off;
+    QTimer *display_timer;
 
     static QSettings program_settings;
 
@@ -97,21 +101,21 @@ private:
     static bool save_int_to_settings(const std::string &key, int val);
     static bool save_bool_to_settings(const std::string &key, bool val);
 
+    void gammaUpdated(EventData data);
+
     bool closing = false;
+    bool demo_mode_last;
+    bool showpreview = false;
 
     void updateGUIControls();
 
-    bool demo_mode_last;
-
     std::stringstream receipt_buf;
 
-    QPixmap receipt_preview_pixmap;
+    QPixmap *receipt_preview_pixmap;
     QGraphicsScene receipt_preview_scene;
-
-    bool showpreview = false;
-
     int gamma = 240;
 
+    bool display_preview_update_schedule = true;
 };
 
 #endif // MAINWINDOW_H

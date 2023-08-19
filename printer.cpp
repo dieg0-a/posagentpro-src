@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include "inputfield.hpp"
 #include "messagesystem.h"
 
 
@@ -122,16 +123,17 @@ bool PrinterRaw::openCashDrawer()
 PrinterRaw::PrinterRaw()
 {
     name = "Abstract RAW Printer";
-    fields.emplace(std::make_pair("lines_to_feed", new integer_range_field("Feed Lines",0, 0, 20, "spinbox")));
-    fields.emplace(std::make_pair("paper_cut", new integer_field("Cut Paper", 0)));
-    fields.emplace(std::make_pair("max_width", new integer_range_field("Max Width", 576, 384, 576, "slider")));
-    fields.emplace(std::make_pair("gamma", new integer_range_field("Gamma", 2400, 500, 4000, "slider")));
+    type = "raw";
+    fields.emplace(std::make_pair("lines_to_feed", new integer_range_field("lines_to_feed", "Feed Lines",0, 0, 20, "spinbox")));
+    fields.emplace(std::make_pair("paper_cut", new boolean_field("paper_cut", "Cut Paper", false)));
+    fields.emplace(std::make_pair("max_width", new integer_range_field("max_width", "Max Width", 576, 384, 576, "slider")));
+    fields.emplace(std::make_pair("gamma", new integer_range_field("gamma", "Gamma", 1000, 200, 1000, "slider")));
 
     std::vector<std::string> protocol_type;
     protocol_type.emplace(protocol_type.end(), std::string("escpos"));
     protocol_type.emplace(protocol_type.end(), std::string("star"));
 
-    fields.emplace(std::make_pair("protocol_type", new string_combo_list_field("Protocol", std::move(protocol_type), 0)));
+    fields.emplace(std::make_pair("protocol_type", new string_combo_list_field("protocol_type", "Protocol", std::move(protocol_type), 0)));
 
 
 //    fields.emplace(std::make_pair("protocol_type", new string_combo_list_field(std::vector<std::string, int>())));
@@ -143,7 +145,7 @@ PrinterRaw::PrinterRaw()
 PrinterLinuxUSBRAW::PrinterLinuxUSBRAW() : PrinterRaw()
 {
     name = "Linux USB Printer";
-    fields.emplace(std::make_pair("Device", new string_field("Device", "/dev/usb/lp0")));
+    fields.emplace(std::make_pair("device", new string_field("device", "Device", "/dev/usb/lp0")));
     GlobalState::registerPrinter(name, this);
 }
 
@@ -174,15 +176,15 @@ bool PrinterLinuxUSBRAW::send_raw(const std::string &buffer)
 PrinterThermalLinuxTCPIP::PrinterThermalLinuxTCPIP()
 {
     name = "Linux TCP/IP Printer";
-    fields.emplace(std::make_pair("Address", new string_field("Address", "127.0.0.1")));
-    fields.emplace(std::make_pair("Port", new string_field("Port", std::to_string(9100))));
+    fields.emplace(std::make_pair("address", new string_field("address", "Address", "127.0.0.1")));
+    fields.emplace(std::make_pair("port", new string_field("port", "Port", std::to_string(9100))));
     GlobalState::registerPrinter(name, this);
 }
 
 PrinterThermalLinuxTCPIP::PrinterThermalLinuxTCPIP(const std::string &_address, uint _port)
 {
-    fields.emplace(std::make_pair("Address", new string_field("Address", _address)));
-    fields.emplace(std::make_pair("Port", new string_field("Port", std::to_string(_port))));
+    fields.emplace(std::make_pair("address", new string_field("address", "Address", _address)));
+    fields.emplace(std::make_pair("port", new string_field("port", "Port", std::to_string(_port))));
 }
 
 bool PrinterThermalLinuxTCPIP::connectToPrinter()
@@ -259,3 +261,5 @@ device_status PrinterThermalLinuxTCPIP::updateAndGetStatus()
 }
 
 #endif
+
+

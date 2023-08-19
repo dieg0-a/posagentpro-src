@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets PrintSupport REQUIRED)
 
 set(PROJECT_SOURCES
         main.cpp json.cpp printer.cpp json.hpp printer.hpp escpos.cpp
@@ -23,7 +23,9 @@ set(PROJECT_SOURCES
         printercombofieldmodel.cpp printerdriverlistmodel.h
         printerdriverlistmodel.cpp resources.cpp resources.h
         inputfield.hpp inputfield.cpp windowsprinter.h windows_printer_extra.cpp
-        printagent.qrc
+        eventclient.cpp eventclient.h eventdata.cpp eventdata.h eventsystem.cpp
+        qtprinter.hpp qtprinter.cpp
+        eventsystem.h printagent.qrc
 )
 
 
@@ -104,12 +106,12 @@ else()
 endif()
 
 if (WIN32)
-    target_link_libraries(posagent PRIVATE iphlpapi userenv.lib Qt${QT_VERSION_MAJOR}::Widgets)
+    target_link_libraries(posagent PRIVATE iphlpapi userenv.lib Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport)
 else()
     find_package(ZLIB REQUIRED)
     find_package(OpenSSL REQUIRED)
     find_package(JPEG 80 REQUIRED)
-    target_link_libraries(posagent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ZLIB::ZLIB OpenSSL::SSL JPEG::JPEG ${CMAKE_SOURCE_DIR}/uWebSockets/uSockets/uSockets.a)
+    target_link_libraries(posagent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport ZLIB::ZLIB OpenSSL::SSL JPEG::JPEG ${CMAKE_SOURCE_DIR}/uWebSockets/uSockets/uSockets.a)
 endif()
 
 set_target_properties(posagent PROPERTIES

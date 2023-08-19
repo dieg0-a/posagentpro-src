@@ -1,5 +1,4 @@
-﻿#pragma once
-#include <string>
+﻿#include <string>
 #ifdef __linux__
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -17,6 +16,7 @@
 #include "inputfield.hpp"
 #include "jpeg.hpp"
 
+#pragma once
 
 enum device_status {CONNECTED, DISCONNECTED, NOT_FOUND};
 
@@ -24,6 +24,7 @@ std::string to_string(const device_status &d);
 
 class Printer {
 protected:
+    std::string type = "normal";
     std::string name;
     std::map<std::string, input_field*> fields;
 
@@ -55,6 +56,8 @@ public:
 
 
     virtual ~Printer(){};
+    
+    std::string getType(){return type; };
 };
 
 class PrinterRaw: public Printer {
@@ -123,7 +126,7 @@ public:
 
 class PrinterLinuxUSBRAW : public PrinterRaw {
 private:
-    std::string device(){return fields.at("Device")->get_string();};
+    std::string device(){return fields.at("device")->get_string();};
 public:
     PrinterLinuxUSBRAW();
     PrinterLinuxUSBRAW(const char *device_name);
@@ -135,14 +138,14 @@ public:
 
 class PrinterThermalLinuxTCPIP : public PrinterRaw {
 private:
-    std::string address(){return fields.at("Address")->get_string();};
+    std::string address(){return fields.at("address")->get_string();};
 
     int port()
     {
                                                int port = 0;
                                                try
                                                {
-                                                   port = std::stoi(fields.at("Port")->get_string());
+                                                   port = std::stoi(fields.at("port")->get_string());
                                                }
                                                catch(std::invalid_argument const& ex)
                                                {
@@ -169,4 +172,5 @@ public:
     ~PrinterThermalLinuxTCPIP(){};
 };
 #endif
+
 
