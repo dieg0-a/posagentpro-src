@@ -17,6 +17,7 @@
 #include <math.h>
 #include <qlayoutitem.h>
 #include <qscrollarea.h>
+#include <qsizepolicy.h>
 #include <sstream>
 
 MainWindow *MainWindow::active_window;
@@ -217,13 +218,14 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
 }
 
 void MainWindow::updatePrintConfigWidget() {
-  //auto temp = ui->printer_driver_settings;
-  auto printer_driver_settings = new QWidget(ui->printer_driver_settings_scroll_area);
+  // auto temp = ui->printer_driver_settings;
+  auto printer_driver_settings =
+      new QWidget(ui->printer_driver_settings_scroll_area);
   ui->printer_driver_settings_scroll_area->setWidget(printer_driver_settings);
-//  ui->printer_driver_settings->setTitle("Printer Driver Settings");
-//  ui->printer_driver_settings_scroll_area->layout()->replaceWidget(temp,
-//                                                ui->printer_driver_settings);
-  //delete temp;
+  //  ui->printer_driver_settings->setTitle("Printer Driver Settings");
+  //  ui->printer_driver_settings_scroll_area->layout()->replaceWidget(temp,
+  //                                                ui->printer_driver_settings);
+  // delete temp;
   //    ui->printer_driver_settings = new QGroupBox(ui->centralwidget);
   //    ui->centralwidget->layout()->addWidget(ui->printer_driver_settings);
   auto hl = new QHBoxLayout();
@@ -232,7 +234,7 @@ void MainWindow::updatePrintConfigWidget() {
   p_settings_top_widget = new QWidget(printer_driver_settings);
 
   hl->addWidget(p_settings_top_widget);
-  auto vl = new QVBoxLayout();  
+  auto vl = new QVBoxLayout();
   p_settings_top_widget->setLayout(vl);
 
   for (auto &options : GlobalState::getCurrentPrinter()->getFieldsByOrder()) {
@@ -880,19 +882,25 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 void MainWindow::toggleDisplayPreview(bool checked) {
   showpreview = checked;
   save_bool_to_settings("show_preview_window", showpreview);
-  if (!checked)
+  if (!checked) {
     ui->receipt_preview_view->hide();
+    ui->left_printer_tab_spacer->changeSize(0, 20, QSizePolicy::Expanding,
+                                            QSizePolicy::Fixed);
+  }
+
   else {
+    ui->left_printer_tab_spacer->changeSize(0, 20, QSizePolicy::Fixed,
+                                            QSizePolicy::Fixed);
+                                            
     ui->receipt_preview_view->show();
     scheduleDiplayPreviewUpdate();
   }
 
-//  ui->tabWidget->adjustSize();
-//  ui->centralwidget->adjustSize();
+  //  ui->tabWidget->adjustSize();
+  //  ui->centralwidget->adjustSize();
   //    setFixedSize(geometry().width(), geometry().height());
   //    setSizePolicy(QSizePolicy(QSizePolicy::Policy::Preferred,
   //    QSizePolicy::Policy::Preferred));
-//  adjustSize();
 }
 
 MainWindow::~MainWindow() { delete ui; }

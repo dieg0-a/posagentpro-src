@@ -106,7 +106,8 @@ void PrinterQt::onEvent(EventData d) {
     page_setup_dialog->setWindowTitle(("Page Setup"));
     page_setup_dialog->show();
   } else if (d.name() == "qapplication_ready") {
-
+    printer = new QPrinter(
+        QPrinterInfo::printerInfo(fields.at("printer")->get_string().c_str()));
   } else if (d.name() == "printer_changed") {
     if (printer != nullptr)
       delete printer;

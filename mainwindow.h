@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QGraphicsScene>
 #include <QPrinter>
+#include <QGraphicsPixmapItem>
 #include "object.hpp"
 
 #include <map>
@@ -112,6 +113,7 @@ private:
     std::stringstream receipt_buf;
 
     QPixmap *receipt_preview_pixmap;
+//    QGraphicsPixmapItem *receipt_preview_pixmap_item = nullptr;
     QGraphicsScene receipt_preview_scene;
     int gamma = 240;
 

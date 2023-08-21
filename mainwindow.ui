@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1159</width>
-    <height>701</height>
+    <width>1164</width>
+    <height>836</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -72,6 +72,22 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
+         <spacer name="left_printer_tab_spacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QWidget" name="left_pane" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -81,7 +97,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>350</width>
+            <width>450</width>
             <height>0</height>
            </size>
           </property>
@@ -151,8 +167,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>513</width>
-                      <height>405</height>
+                      <width>496</width>
+                      <height>540</height>
                      </rect>
                     </property>
                    </widget>
@@ -203,7 +219,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_2">
+         <spacer name="midde_printer_tab_spacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -649,7 +665,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1159</width>
+     <width>1164</width>
      <height>23</height>
     </rect>
    </property>
