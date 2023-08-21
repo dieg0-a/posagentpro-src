@@ -42,17 +42,6 @@ device_status PrinterQt::updateAndGetStatus() {
 
 PrinterQt::PrinterQt() : eventclient(EventClient(this)) {
   name = "System Printer";
-
-  fields.erase("lines_to_feed");
-  fields.erase("paper_cut");
-  fields.erase("max_width");
-  fields.erase("protocol_type");
-
-  fields.emplace(
-      std::make_pair("settings", new action_field("settings", "Settings...")));
-  fields.emplace(std::make_pair(
-      "pagesetup", new action_field("pagesetup", "Page Setup...")));
-
   auto qtprinters = QPrinterInfo::availablePrinterNames();
 
   std::vector<std::string> printers;
@@ -61,9 +50,27 @@ PrinterQt::PrinterQt() : eventclient(EventClient(this)) {
     printers.push_back(p.toStdString());
   }
 
-  fields.emplace(std::make_pair(
-      "printer", new string_combo_list_field("printer", "Printer",
-                                             std::move(printers), 0)));
+
+//  addField(new string_combo_list_field("printer", "Printer",
+//                                             std::move(printers), 0), 0);
+
+  addField(new string_combo_list_field("printer", "Printer",
+                                       std::move(printers), 0),
+           0);
+  addField(new action_field("settings", "Settings..."), 1);
+  addField(new action_field("pagesetup", "Page Setup..."), 2);
+
+  addField(new integer_range_field("gamma", "Gamma", 1000, 200, 1000, "slider"),
+           3);
+
+
+  addField(new integer_range_field("max_width", "Max Width", 576, 384, 576,
+                                   "slider"),
+           4);
+  addField(new integer_range_field("lines_to_feed", "Feed Lines", 0, 0, 20,
+                                   "spinbox"),
+           5);
+  addField(new boolean_field("paper_cut", "Cut Paper", false), 6);
 
   GlobalState::registerPrinter(name, this);
   eventclient.subscribeToEvent("settings_executed");
@@ -99,17 +106,12 @@ void PrinterQt::onEvent(EventData d) {
     page_setup_dialog->setWindowTitle(("Page Setup"));
     page_setup_dialog->show();
   } else if (d.name() == "qapplication_ready") {
-    printer = new QPrinter(QPrinter::HighResolution);
-    printer->setOutputFormat(QPrinter::OutputFormat::PdfFormat);
-  } else if (d.name() == "printer_changed") { /*
-     if (printer != nullptr)
-       delete printer;
-     std::cout << "DEBUG: SELECTED PRINTER HAS NAME: "
-               << fields.at("printer")->get_string().c_str() << "\n";
-     printer = new QPrinter(
-         QPrinterInfo::printerInfo(fields.at("printer")->get_string().c_str()));
-     printer->setOutputFormat(QPrinter::OutputFormat::PdfFormat);
-     */
+
+  } else if (d.name() == "printer_changed") {
+    if (printer != nullptr)
+      delete printer;
+    printer = new QPrinter(
+        QPrinterInfo::printerInfo(fields.at("printer")->get_string().c_str()));
   }
 }
 
@@ -202,12 +204,6 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
                     new_height, QImage::Format::Format_Mono);
 
   QPainter painter;
-
-
-////
-  printer->setOutputFileName("file.pdf");
-////
-
 
   painter.begin(printer);
   auto margins = printer->pageLayout().marginsPixels(printer->resolution());

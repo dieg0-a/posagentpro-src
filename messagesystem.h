@@ -112,16 +112,17 @@ public:
 
   static void printerSetIndex(std::string name, int index) {
     if (selected_printer != nullptr) {
-      selected_printer->setIndex(name, index);
+      auto str = selected_printer->setIndex(name, index);
       if (autosave)
         str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name,
-                        selected_printer->getString(name));
+                        str);
     }
   };
 
-  static std::map<std::string, input_field *> &printerGetFields() {
-    return selected_printer->getFields();
+  static std::map<std::string, input_field *> const &printerGetFields() {
+    return selected_printer->getFieldsByName();
   };
+  /*
   static int printerGetInt(std::string name) {
     return selected_printer->getInt(name);
   };
@@ -132,6 +133,7 @@ public:
     return selected_printer->getListOfStrings(name);
   };
 
+  */
   static void setHttpPort(int port) {
     http_proxy_port = port;
     if (autosave) {

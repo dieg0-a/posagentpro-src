@@ -151,7 +151,7 @@ void GlobalState::loadSettings() {
   if (fromSettings("http_proxy_port", proxy_port))
     http_proxy_port = proxy_port;
   for (auto &[name, p] : printer_drivers) {
-    for (auto &[fname, f] : p->getFields()) {
+    for (auto &[fname, f] : p->getFieldsByName()) {
       if (f->get_type() == STRING) {
         std::string field;
         if (fromSettings("printer_" + name + "_field_" + fname, field))

@@ -33,6 +33,7 @@ protected:
   input_field() : eventclient(EventClient(this)){};
 
 public:
+  int order = 0;
   void set_tooltip(const std::string &t) { tooltip = t; };
   std::string get_tooltip() { return tooltip; };
 
@@ -55,7 +56,7 @@ public:
   virtual void set_index(int index){};
 
   std::string name() { return _name; };
-  std::string display_name() {return _display_name;};
+  std::string display_name() { return _display_name; };
   void set_name(std::string name) { _name = name; };
 
   input_field(std::string name, std::string display_name)
@@ -215,7 +216,8 @@ private:
   int current_item_index;
 
 public:
-  string_combo_list_field(const std::string &name, const std::string &display_name,
+  string_combo_list_field(const std::string &name,
+                          const std::string &display_name,
                           const std::vector<std::string> &&o,
                           unsigned int index)
       : input_field(name, display_name) {
@@ -235,12 +237,18 @@ public:
   };
 
   void set_string(std::string combo) {
+    if (options.empty())
+      return;
+    if (combo == options[current_item_index])
+      return;
     for (int i = 0; i < options.size(); i++) {
-      if (options[i] == combo)
+      if (options[i] == combo) {
         current_item_index = i;
-      EventSystem::instance().emitEvent(
-          _name + "_changed",
-          EventData(_name + "_changed", combo, eventclient.getID()));
+        EventSystem::instance().emitEvent(
+            _name + "_changed",
+            EventData(_name + "_changed", combo, eventclient.getID()));
+            break;
+      }
     }
   };
   void set_index(int index) {

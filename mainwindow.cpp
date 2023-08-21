@@ -16,6 +16,7 @@
 #include <iostream>
 #include <math.h>
 #include <qlayoutitem.h>
+#include <qscrollarea.h>
 #include <sstream>
 
 MainWindow *MainWindow::active_window;
@@ -204,10 +205,9 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
       printer->pageLayout().paintRectPixels(printer->resolution());
   QRectF source_rect_float = QRectF(0, 0, max_width, new_height);
 
-  QRectF printable_area_pixels =
-      QRectF(0, 0, pagerect.width(),
-             ((float)(pagerect.width()) /
-              (float)max_width) * (float) new_height);
+  QRectF printable_area_pixels = QRectF(
+      0, 0, pagerect.width(),
+      ((float)(pagerect.width()) / (float)max_width) * (float)new_height);
   painter.drawImage(printable_area_pixels, i,
                     QRect(0, 0, max_width, new_height));
 
@@ -217,18 +217,25 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
 }
 
 void MainWindow::updatePrintConfigWidget() {
-  auto temp = ui->printer_driver_settings;
-  ui->printer_driver_settings = new QGroupBox(ui->printer_settings);
-  ui->printer_driver_settings->setTitle("Printer Driver Settings");
-  ui->printer_settings->layout()->replaceWidget(temp,
-                                                ui->printer_driver_settings);
-  delete temp;
+  //auto temp = ui->printer_driver_settings;
+  auto printer_driver_settings = new QWidget(ui->printer_driver_settings_scroll_area);
+  ui->printer_driver_settings_scroll_area->setWidget(printer_driver_settings);
+//  ui->printer_driver_settings->setTitle("Printer Driver Settings");
+//  ui->printer_driver_settings_scroll_area->layout()->replaceWidget(temp,
+//                                                ui->printer_driver_settings);
+  //delete temp;
   //    ui->printer_driver_settings = new QGroupBox(ui->centralwidget);
   //    ui->centralwidget->layout()->addWidget(ui->printer_driver_settings);
-  ui->printer_driver_settings->setLayout(new QVBoxLayout());
-  p_settings_top_widget = ui->printer_driver_settings;
+  auto hl = new QHBoxLayout();
+  printer_driver_settings->setLayout(hl);
 
-  for (auto &options : GlobalState::getCurrentPrinter()->getFields()) {
+  p_settings_top_widget = new QWidget(printer_driver_settings);
+
+  hl->addWidget(p_settings_top_widget);
+  auto vl = new QVBoxLayout();  
+  p_settings_top_widget->setLayout(vl);
+
+  for (auto &options : GlobalState::getCurrentPrinter()->getFieldsByOrder()) {
     if (options.second->get_type() == STRING) {
       auto string_field = new QWidget(p_settings_top_widget);
       auto hl = new QHBoxLayout();
@@ -245,7 +252,7 @@ void MainWindow::updatePrintConfigWidget() {
       label->setMinimumWidth(70);
 
       auto input = new QLineEdit(string_field);
-      input->setObjectName(options.first.c_str());
+      input->setObjectName(options.second->name().c_str());
       hl->addWidget(input);
       input->setText(options.second->get_string().c_str());
 
@@ -266,7 +273,7 @@ void MainWindow::updatePrintConfigWidget() {
 
       auto input = new QLineEdit(number_field);
       input->setValidator(new QIntValidator(0, 100, number_field));
-      input->setObjectName(options.first.c_str());
+      input->setObjectName(options.second->name().c_str());
       number_field->layout()->addWidget(input);
       input->setText(QString::number(options.second->get_int()));
 
@@ -290,7 +297,7 @@ void MainWindow::updatePrintConfigWidget() {
         auto input = new QLineEdit(number_field);
         input->setValidator(new QIntValidator(
             r->getRange().first, r->getRange().second, number_field));
-        input->setObjectName(options.first.c_str());
+        input->setObjectName(options.second->name().c_str());
         number_field->layout()->addWidget(input);
         input->setText(QString::number(options.second->get_int()));
       } else if (r->get_widget_type() == "spinbox") {
@@ -306,7 +313,7 @@ void MainWindow::updatePrintConfigWidget() {
         auto input = new QSpinBox(number_field);
         input->setRange(r->getRange().first, r->getRange().second);
         input->setValue(options.second->get_int());
-        input->setObjectName(options.first.c_str());
+        input->setObjectName(options.second->name().c_str());
         number_field->layout()->addWidget(input);
       } else if (r->get_widget_type() == "slider") {
         auto number_field = new QWidget(p_settings_top_widget);
@@ -330,7 +337,7 @@ void MainWindow::updatePrintConfigWidget() {
         auto input = new QSlider(Qt::Orientation::Horizontal, number_field_top);
         input->setRange(r->getRange().first, r->getRange().second);
         input->setValue(options.second->get_int());
-        input->setObjectName(options.first.c_str());
+        input->setObjectName(options.second->name().c_str());
         number_field_top->layout()->addWidget(input);
 
         //        p_settings_top_widget->layout()->removeWidget(number_field);
@@ -376,7 +383,7 @@ void MainWindow::updatePrintConfigWidget() {
           (string_combo_list_field *)options.second;
       auto combo_widget = new QWidget(p_settings_top_widget);
       auto combo_field = new QComboBox(combo_widget);
-      combo_field->setObjectName(options.first.c_str());
+      combo_field->setObjectName(options.second->name().c_str());
       p_settings_top_widget->layout()->addWidget(combo_widget);
       combo_field->setModel(new StringComboListModel(*combo, combo_field));
       combo_field->setCurrentIndex(options.second->get_index());
@@ -414,7 +421,7 @@ void MainWindow::updatePrintConfigWidget() {
       label->setMinimumWidth(70);
 
       auto input = new QCheckBox(boolean_field);
-      input->setObjectName(options.first.c_str());
+      input->setObjectName(options.second->name().c_str());
       hl->addWidget(input);
       input->setChecked(options.second->get_int());
       input->setFixedWidth(20);
@@ -431,11 +438,13 @@ void MainWindow::updatePrintConfigWidget() {
       button->setLayout(hl);
 
       auto input = new QPushButton(button);
-      input->setObjectName(options.first.c_str());
+      input->setObjectName(options.second->name().c_str());
       input->setText(options.second->display_name().c_str());
+      input->setMaximumWidth(150);
+      input->setMinimumWidth(150);
       hl->addWidget(input);
-      //      input->setFixedWidth(200);
       hl->addStretch();
+      //      input->setFixedWidth(200);
       QObject::connect(input, SIGNAL(clicked()), this,
                        SLOT(optionButtonClicked()));
     }
@@ -641,10 +650,11 @@ void MainWindow::updatePrinterDriver(int index) {
   GlobalState::setCurrentPrinter(index);
   updatePrintConfigWidget();
   updateGUIControls();
-  if (GlobalState::getCurrentPrinter()->getType() == "raw") {
-    gamma = GlobalState::getCurrentPrinter()->getInt("gamma");
+  auto fields = GlobalState::getCurrentPrinter()->getFieldsByName();
+  if (fields.contains("gamma")) {
+    gamma = fields["gamma"]->get_int();
+    scheduleDiplayPreviewUpdate();
   }
-  scheduleDiplayPreviewUpdate();
 }
 
 void MainWindow::setStartInTray(int state) {
@@ -877,12 +887,12 @@ void MainWindow::toggleDisplayPreview(bool checked) {
     scheduleDiplayPreviewUpdate();
   }
 
-  ui->tabWidget->adjustSize();
-  ui->centralwidget->adjustSize();
+//  ui->tabWidget->adjustSize();
+//  ui->centralwidget->adjustSize();
   //    setFixedSize(geometry().width(), geometry().height());
   //    setSizePolicy(QSizePolicy(QSizePolicy::Policy::Preferred,
   //    QSizePolicy::Policy::Preferred));
-  adjustSize();
+//  adjustSize();
 }
 
 MainWindow::~MainWindow() { delete ui; }
