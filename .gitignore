@@ -2,4 +2,5 @@ build/
 .cache/
 CMakeLists.txt.user
 uWebSockets/
-
+.vscode/
+.vs/

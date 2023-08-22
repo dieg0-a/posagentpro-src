@@ -112,7 +112,8 @@ private:
 
     std::stringstream receipt_buf;
 
-    QPixmap *receipt_preview_pixmap;
+    QPixmap receipt_preview_pixmap;
+    char *receipt_preview_image_data = nullptr;
 //    QGraphicsPixmapItem *receipt_preview_pixmap_item = nullptr;
     QGraphicsScene receipt_preview_scene;
     int gamma = 240;

@@ -14,6 +14,7 @@
 #include <QSpacerItem>
 #include <QTimer>
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include <qlayoutitem.h>
 #include <qscrollarea.h>
@@ -195,7 +196,11 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
     }
   }
 
-  QImage i = QImage((unsigned char *)receipt_buf.str().c_str(), max_width,
+  auto temp = new char[(max_width*new_height)/8];
+  receipt_buf.read(temp, (max_width*new_height)/8);
+  //  strcpy_s((char*)pointer, (max_width*new_height)/8, receipt_buf.str().data());
+
+  QImage i = QImage((unsigned char *)temp, max_width,
                     new_height, QImage::Format::Format_Mono);
   QPainter painter;
   painter.begin(printer);
@@ -215,6 +220,7 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
   // Use the painter to draw on the page.
 
   painter.end();
+  delete[] temp;
 }
 
 void MainWindow::updatePrintConfigWidget() {
@@ -328,7 +334,7 @@ void MainWindow::updatePrintConfigWidget() {
         number_field->layout()->addWidget(number_field_top);
 
         number_field_top->setLayout(new QHBoxLayout());
-        number_field_top->layout()->setMargin(0);
+        number_field_top->layout()->setContentsMargins(0,0,0,0);
         number_field_top->layout()->setSpacing(0);
 
         auto label = new QLabel(number_field_top);
@@ -347,7 +353,7 @@ void MainWindow::updatePrintConfigWidget() {
         auto number_field_bottom = new QWidget(number_field);
         number_field->layout()->addWidget(number_field_bottom);
         number_field_bottom->setLayout(new QHBoxLayout());
-        number_field_bottom->layout()->setMargin(0);
+        number_field_bottom->layout()->setContentsMargins(0,0,0,0);
         number_field_bottom->layout()->setSpacing(0);
 
         auto minmax = new QLabel(number_field_bottom);
@@ -553,17 +559,50 @@ void MainWindow::updateReceiptPreview() {
     }
   }
 
-  QImage i = QImage((unsigned char *)receipt_buf.str().c_str(), max_width,
+  /*
+  // DEBUG
+  std::fstream file;
+  try {
+      file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
+      file.open("output.txt", std::ios::out | std::ios::binary);
+      int k = 0;
+      for (int i = 0 ; i < receipt_buf.str().length() ; i++)
+      {
+          char c = receipt_buf.str()[i];
+          for (int j = 0; j < 8; j++)
+          {
+              if (k % max_width == 0) file.write("\n",1);
+              const char *s = { c & (char)(0x01 << 7-j) ? "@" : " " };
+              file.write(s, 1);
+              k++;
+          }
+      }
+  }
+  catch (const std::ofstream::failure& e) {
+      std::cout << "Failure to write binary file test\n";
+      if (file.is_open()) file.close();
+  }
+  if (file.is_open()) file.close();
+  //DEBUG
+*/
+
+  if (receipt_preview_image_data != nullptr) delete [] receipt_preview_image_data;
+  receipt_preview_image_data = new char[max_width*new_height/8];
+  receipt_buf.read(receipt_preview_image_data, (max_width*new_height)/8);
+//  strcpy_s((char*)pointer, (max_width*new_height)/8, receipt_buf.str().data());
+
+  QImage i = QImage((unsigned char *)receipt_preview_image_data, max_width,
                     new_height, QImage::Format::Format_Mono);
+  //j->save("test.png");
   receipt_preview_scene.clear();
-  if (receipt_preview_pixmap != nullptr)
-    delete receipt_preview_pixmap;
-  receipt_preview_pixmap = new QPixmap();
+  //if (receipt_preview_pixmap != nullptr)
+  //  delete receipt_preview_pixmap;
+  //receipt_preview_pixmap = new QPixmap();
   //       ui->receipt_preview_view->update();
-  receipt_preview_pixmap->convertFromImage(i);
-  receipt_preview_scene.addPixmap(*receipt_preview_pixmap);
+  receipt_preview_pixmap.convertFromImage(i);
+  receipt_preview_scene.addPixmap(receipt_preview_pixmap);
   //       receipt_preview_scene.update();
-  receipt_preview_scene.setSceneRect(receipt_preview_pixmap->rect());
+  receipt_preview_scene.setSceneRect(receipt_preview_pixmap.rect());
   //       ui->receipt_preview_view->fitInView(receipt_preview_pixmap.rect().x(),
   //       receipt_preview_pixmap.rect().y(),
   //                                           receipt_preview_pixmap.rect().width(),
@@ -693,7 +732,7 @@ MainWindow::MainWindow(QWidget *parent)
   //    setFixedSize(geometry().width(), geometry().height());
 
   active_window = this;
-  receipt_preview_pixmap = new QPixmap();
+  //receipt_preview_pixmap = new QPixmap();
 
   minimizeAction = new QAction(tr("Mi&nimize"), this);
   connect(minimizeAction, &QAction::triggered, this, &QWidget::hide);
@@ -826,7 +865,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   ui->receipt_preview_view->setScene(&receipt_preview_scene);
 
-  receipt_preview_scene.addPixmap(*receipt_preview_pixmap);
+  //receipt_preview_scene.addPixmap(*receipt_preview_pixmap);
 
   //  receipt_preview_scene.setSceneRect(receipt_preview_pixmap->rect());
 

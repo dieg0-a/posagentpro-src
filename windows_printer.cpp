@@ -89,12 +89,12 @@ bool isPrinterOffline(CHAR *printerName){
     return false;
 }
 
-device_status PrinterWindowsRawSpooler::updateAndGetStatus()
+device_status PrinterWindowsSpooler::updateAndGetStatus()
 {
-    return isPrinterOffline(fields.at("Name")->get_combo_selected().data()) ? DISCONNECTED : CONNECTED;
+    return isPrinterOffline(fields.at("name")->get_string().data()) ? DISCONNECTED : CONNECTED;
 }
 
-std::vector<std::string> PrinterWindowsRawSpooler::enumeratePrinters()
+std::vector<std::string> PrinterWindowsSpooler::enumeratePrinters()
 {
     std::vector<std::string> printers;
     unsigned long pcbneeded = 0;
@@ -123,7 +123,7 @@ std::vector<std::string> PrinterWindowsRawSpooler::enumeratePrinters()
 //std::string PrinterWindowsRawSpooler::getName() const {return fields.at("Name").get_combo_selected();};
 
 
-bool PrinterWindowsRawSpooler::send_raw(const std::string &buffer2)
+bool PrinterWindowsSpooler::send_raw(const std::string &buffer2)
 {
   BOOL bStatus = FALSE;
   HANDLE hPrinter = NULL;
@@ -134,7 +134,7 @@ bool PrinterWindowsRawSpooler::send_raw(const std::string &buffer2)
   unsigned char *lpData = new unsigned char[buffer2.size()];
   memcpy_s(lpData, buffer2.size(), buffer2.data(), buffer2.size());
 
-  auto printer_name = fields.at("Name")->get_combo_selected();
+  auto printer_name = fields.at("name")->get_string();
 
 //  char *lpData = new char[buffer2.size()];
 //  strcpy_s(lpData, buffer2.size() + 1, buffer2.c_str());
@@ -200,7 +200,7 @@ bool PrinterWindowsRawSpooler::send_raw(const std::string &buffer2)
 }
 
 
-PrinterWindowsRawSpooler::~PrinterWindowsRawSpooler()
+PrinterWindowsSpooler::~PrinterWindowsSpooler()
 {
 
 };

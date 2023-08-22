@@ -46,9 +46,17 @@ public:
   void deregisterEventClient(int client) {
     for (auto name : event_handlers) {
       name.second.remove(client);
-      if (name.second.empty())
-        event_handlers.erase(name.first);
     }
+    std::list<std::string> toremove;
+    for (auto name : event_handlers) {
+        if (name.second.empty())
+            toremove.push_back(name.first);
+    }
+    for (auto s : toremove)
+    {
+        event_handlers.erase(s);
+    }
+    
   }
 
   void deregisterEventClientHandler(int client, std::string eventname) {

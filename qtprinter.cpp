@@ -201,7 +201,11 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
     }
   }
 
-  QImage i = QImage((unsigned char *)receipt_buf.str().c_str(), max_width,
+  auto temp = new char[(max_width*new_height)/8];
+  receipt_buf.read(temp, (max_width*new_height)/8);
+  //  strcpy_s((char*)pointer, (max_width*new_height)/8, receipt_buf.str().data());
+
+  QImage i = QImage((unsigned char *)temp, max_width,
                     new_height, QImage::Format::Format_Mono);
 
   QPainter painter;
@@ -219,5 +223,6 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
                     QRect(0, 0, max_width, new_height));
   // Use the painter to draw on the page.
   painter.end();
+  delete [] temp;
   return true;
 }

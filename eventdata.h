@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 
-enum EventDataType { STR, INT, DOUBLE, BOOLEAN, JSON, NONE };
+enum EventDataType { STR_DATA, INT_DATA, DOUBLE_DATA, BOOLEAN_DATA, JSON_DATA, NONE_DATA };
 
 class EventData {
 private:
@@ -28,34 +28,34 @@ public:
 
   EventData(std::string name, int sender_id = 0) {
     _sender = sender_id;
-    type = NONE;
+    type = NONE_DATA;
     _name = name;
   }
   EventData(std::string name, std::string &_strdata, bool json, int sender_id = 0) {
     _sender = sender_id;
     strdata = _strdata;
-    type = json ? JSON : STR;
+    type = json ? JSON_DATA : STR_DATA;
     _name = name;
   }
 
   EventData(std::string name, int _intdata, int sender_id) {
     _sender = sender_id;
     intdata = _intdata;
-    type = INT;
+    type = INT_DATA;
     _name = name;
   }
 
   EventData(std::string name, double _doubledata, int sender_id = 0) {
     _sender = sender_id;
     doubledata = _doubledata;
-    type = DOUBLE;
+    type = DOUBLE_DATA;
     _name = name;
   }
 
   EventData(std::string name, bool _booldata, int sender_id = 0) {
     _sender = sender_id;
     booldata = _booldata;
-    type = BOOLEAN;
+    type = BOOLEAN_DATA;
     _name = name;
   }
 };

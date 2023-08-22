@@ -2,6 +2,7 @@
 #define INPUTFIELD_HPP
 #include <string>
 #include <vector>
+#include <iostream>
 #ifdef __linux__
 #include <climits>
 #include <iostream>
