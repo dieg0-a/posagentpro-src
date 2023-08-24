@@ -479,7 +479,8 @@ void MainWindow::updateReceiptPreview() {
   int max_width = 512;
   if (GlobalState::getLastReceipt() == nullptr)
     return;
-  receipt_buf.str(std::string());
+    
+  //receipt_buf.str(std::string());
   auto s = GlobalState::getLastReceipt()->image_memory_ptr();
   int height = GlobalState::getLastReceipt()->height();
   int width = GlobalState::getLastReceipt()->width();
@@ -487,9 +488,13 @@ void MainWindow::updateReceiptPreview() {
   double ratio = double(width) / double(max_width);
   int new_height = height / ratio;
 
+//if (receipt_preview_image_data != nullptr) delete [] receipt_preview_image_data;
+//  receipt_preview_image_data = new unsigned char[max_width*new_height/8];
+
   double gamma_d = (double)gamma;
 
   short bitcounter = 0;
+  int bytecounter = 0;
   unsigned char buffer_byte = '\0';
   for (int i = 0; i < new_height; i++) {
     for (int j = 0; j < (max_width); j++) {
@@ -553,8 +558,10 @@ void MainWindow::updateReceiptPreview() {
       bitcounter++;
       if (bitcounter == 8) {
         bitcounter = 0;
-        receipt_buf << buffer_byte;
+        //receipt_buf << buffer_byte;
+        receipt_preview_image_data[bytecounter] = buffer_byte;
         buffer_byte = 0;
+        bytecounter++;
       }
     }
   }
@@ -586,12 +593,12 @@ void MainWindow::updateReceiptPreview() {
   //DEBUG
 */
 
-  if (receipt_preview_image_data != nullptr) delete [] receipt_preview_image_data;
-  receipt_preview_image_data = new char[max_width*new_height/8];
-  receipt_buf.read(receipt_preview_image_data, (max_width*new_height)/8);
+//  if (receipt_preview_image_data != nullptr) delete [] receipt_preview_image_data;
+//  receipt_preview_image_data = new char[max_width*new_height/8];
+//  receipt_buf.read(receipt_preview_image_data, (max_width*new_height)/8);
 //  strcpy_s((char*)pointer, (max_width*new_height)/8, receipt_buf.str().data());
 
-  QImage i = QImage((unsigned char *)receipt_preview_image_data, max_width,
+  QImage i = QImage(receipt_preview_image_data, max_width,
                     new_height, QImage::Format::Format_Mono);
   //j->save("test.png");
   receipt_preview_scene.clear();
@@ -848,20 +855,6 @@ MainWindow::MainWindow(QWidget *parent)
   } else
     show();
 
-  connect(ui->restart_network_button, SIGNAL(clicked()), this,
-          SLOT(restartNetworkThread()));
-  //    connect(ui->stop_network_button, SIGNAL(clicked()), this,
-  //    SLOT(stopNetworkThread()));
-  connect(ui->printer_driver_combo, SIGNAL(currentIndexChanged(int)), this,
-          SLOT(updatePrinterDriver(int)));
-  connect(ui->http_port_spinbox, SIGNAL(valueChanged(int)), this,
-          SLOT(setHttpProxyPort(int)));
-  connect(ui->start_in_tray, SIGNAL(stateChanged(int)), this,
-          SLOT(setStartInTray(int)));
-  connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
-          SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  connect(ui->show_preview_button, SIGNAL(toggled(bool)), this,
-          SLOT(toggleDisplayPreview(bool)));
 
   ui->receipt_preview_view->setScene(&receipt_preview_scene);
 
@@ -881,9 +874,9 @@ MainWindow::MainWindow(QWidget *parent)
   read_bool_from_settings("show_preview_window", showpreview);
   ui->show_preview_button->setChecked(showpreview);
 
-  display_timer = new QTimer(this); // Dispaly preview window update timer
+  display_timer = new QTimer(this); // Display preview window update timer
 
-  display_timer->setInterval(300);
+  display_timer->setInterval(50);
   display_timer->start();
   connect(display_timer, SIGNAL(timeout()), this, SLOT(updateReceiptPreview()));
 
@@ -891,6 +884,20 @@ MainWindow::MainWindow(QWidget *parent)
 
   GlobalState::startNetworkThread();
   t->start();
+    connect(ui->restart_network_button, SIGNAL(clicked()), this,
+          SLOT(restartNetworkThread()));
+  //    connect(ui->stop_network_button, SIGNAL(clicked()), this,
+  //    SLOT(stopNetworkThread()));
+  connect(ui->printer_driver_combo, SIGNAL(currentIndexChanged(int)), this,
+          SLOT(updatePrinterDriver(int)));
+  connect(ui->http_port_spinbox, SIGNAL(valueChanged(int)), this,
+          SLOT(setHttpProxyPort(int)));
+  connect(ui->start_in_tray, SIGNAL(stateChanged(int)), this,
+          SLOT(setStartInTray(int)));
+  connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
+          SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+  connect(ui->show_preview_button, SIGNAL(toggled(bool)), this,
+          SLOT(toggleDisplayPreview(bool)));
   eventclient.subscribeToEvent("gamma_changed");
   EventSystem::instance().emitEvent(
       "qapplication_ready",

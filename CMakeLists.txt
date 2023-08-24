@@ -111,6 +111,7 @@ endif()
 
 if (WIN32)
     target_link_libraries(posagent PRIVATE iphlpapi userenv.lib Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000")
 else()
     find_package(ZLIB REQUIRED)
     find_package(OpenSSL REQUIRED)
