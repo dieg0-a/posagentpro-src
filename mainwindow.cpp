@@ -13,8 +13,8 @@
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QTimer>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <math.h>
 #include <qlayoutitem.h>
 #include <qscrollarea.h>
@@ -25,6 +25,10 @@ MainWindow *MainWindow::active_window;
 
 QSettings MainWindow::program_settings =
     QSettings("PosAgentPRO", "PosAgentPRO");
+
+std::map<std::string, std::string> MainWindow::str_to_save;
+std::map<std::string, int> MainWindow::int_to_save;
+std::map<std::string, bool> MainWindow::bool_to_save;
 
 extern int bayer_matrix[];
 
@@ -196,12 +200,13 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
     }
   }
 
-  auto temp = new char[(max_width*new_height)/8];
-  receipt_buf.read(temp, (max_width*new_height)/8);
-  //  strcpy_s((char*)pointer, (max_width*new_height)/8, receipt_buf.str().data());
+  auto temp = new char[(max_width * new_height) / 8];
+  receipt_buf.read(temp, (max_width * new_height) / 8);
+  //  strcpy_s((char*)pointer, (max_width*new_height)/8,
+  //  receipt_buf.str().data());
 
-  QImage i = QImage((unsigned char *)temp, max_width,
-                    new_height, QImage::Format::Format_Mono);
+  QImage i = QImage((unsigned char *)temp, max_width, new_height,
+                    QImage::Format::Format_Mono);
   QPainter painter;
   painter.begin(printer);
   // auto pagerect =
@@ -334,7 +339,7 @@ void MainWindow::updatePrintConfigWidget() {
         number_field->layout()->addWidget(number_field_top);
 
         number_field_top->setLayout(new QHBoxLayout());
-        number_field_top->layout()->setContentsMargins(0,0,0,0);
+        number_field_top->layout()->setContentsMargins(0, 0, 0, 0);
         number_field_top->layout()->setSpacing(0);
 
         auto label = new QLabel(number_field_top);
@@ -353,7 +358,7 @@ void MainWindow::updatePrintConfigWidget() {
         auto number_field_bottom = new QWidget(number_field);
         number_field->layout()->addWidget(number_field_bottom);
         number_field_bottom->setLayout(new QHBoxLayout());
-        number_field_bottom->layout()->setContentsMargins(0,0,0,0);
+        number_field_bottom->layout()->setContentsMargins(0, 0, 0, 0);
         number_field_bottom->layout()->setSpacing(0);
 
         auto minmax = new QLabel(number_field_bottom);
@@ -384,7 +389,7 @@ void MainWindow::updatePrintConfigWidget() {
 
         connect(input, SIGNAL(valueChanged(int)), this,
                 SLOT(optionSliderReleased(int)));
-        input->setTracking(false);
+        input->setTracking(true);
       }
     } else if (options.second->get_type() == COMBO_LIST_STRING) {
       string_combo_list_field *combo =
@@ -479,8 +484,8 @@ void MainWindow::updateReceiptPreview() {
   int max_width = 512;
   if (GlobalState::getLastReceipt() == nullptr)
     return;
-    
-  //receipt_buf.str(std::string());
+
+  // receipt_buf.str(std::string());
   auto s = GlobalState::getLastReceipt()->image_memory_ptr();
   int height = GlobalState::getLastReceipt()->height();
   int width = GlobalState::getLastReceipt()->width();
@@ -488,8 +493,9 @@ void MainWindow::updateReceiptPreview() {
   double ratio = double(width) / double(max_width);
   int new_height = height / ratio;
 
-//if (receipt_preview_image_data != nullptr) delete [] receipt_preview_image_data;
-//  receipt_preview_image_data = new unsigned char[max_width*new_height/8];
+  // if (receipt_preview_image_data != nullptr) delete []
+  // receipt_preview_image_data;
+  //   receipt_preview_image_data = new unsigned char[max_width*new_height/8];
 
   double gamma_d = (double)gamma;
 
@@ -558,7 +564,7 @@ void MainWindow::updateReceiptPreview() {
       bitcounter++;
       if (bitcounter == 8) {
         bitcounter = 0;
-        //receipt_buf << buffer_byte;
+        // receipt_buf << buffer_byte;
         receipt_preview_image_data[bytecounter] = buffer_byte;
         buffer_byte = 0;
         bytecounter++;
@@ -593,19 +599,20 @@ void MainWindow::updateReceiptPreview() {
   //DEBUG
 */
 
-//  if (receipt_preview_image_data != nullptr) delete [] receipt_preview_image_data;
-//  receipt_preview_image_data = new char[max_width*new_height/8];
-//  receipt_buf.read(receipt_preview_image_data, (max_width*new_height)/8);
-//  strcpy_s((char*)pointer, (max_width*new_height)/8, receipt_buf.str().data());
+  //  if (receipt_preview_image_data != nullptr) delete []
+  //  receipt_preview_image_data; receipt_preview_image_data = new
+  //  char[max_width*new_height/8]; receipt_buf.read(receipt_preview_image_data,
+  //  (max_width*new_height)/8); strcpy_s((char*)pointer,
+  //  (max_width*new_height)/8, receipt_buf.str().data());
 
-  QImage i = QImage(receipt_preview_image_data, max_width,
-                    new_height, QImage::Format::Format_Mono);
-  //j->save("test.png");
+  QImage i = QImage(receipt_preview_image_data, max_width, new_height,
+                    QImage::Format::Format_Mono);
+  // j->save("test.png");
   receipt_preview_scene.clear();
-  //if (receipt_preview_pixmap != nullptr)
-  //  delete receipt_preview_pixmap;
-  //receipt_preview_pixmap = new QPixmap();
-  //       ui->receipt_preview_view->update();
+  // if (receipt_preview_pixmap != nullptr)
+  //   delete receipt_preview_pixmap;
+  // receipt_preview_pixmap = new QPixmap();
+  //        ui->receipt_preview_view->update();
   receipt_preview_pixmap.convertFromImage(i);
   receipt_preview_scene.addPixmap(receipt_preview_pixmap);
   //       receipt_preview_scene.update();
@@ -673,6 +680,35 @@ bool MainWindow::read_bool_from_settings(const std::string &key, bool &val) {
   return false;
 }
 
+void MainWindow::saveOptionChanges() {
+  for (auto [name, value] : str_to_save) {
+    save_str_to_settings(name, value);
+  }
+  for (auto [name, value] : int_to_save) {
+    save_int_to_settings(name, value);
+  }
+  for (auto [name, value] : bool_to_save) {
+    save_bool_to_settings(name, value);
+  }
+  str_to_save.clear();
+  int_to_save.clear();
+  bool_to_save.clear();
+}
+
+bool MainWindow::scheduleOptionSaveStr(const std::string &name,
+                                       const std::string &value) {
+  str_to_save[name] = value;
+  return true;
+};
+bool MainWindow::scheduleOptionSaveInt(const std::string &name, int value) {
+  int_to_save[name] = value;
+  return true;
+};
+bool MainWindow::scheduleOptionSaveBool(const std::string &name, bool value) {
+  bool_to_save[name] = value;
+  return true;
+};
+
 bool MainWindow::save_str_to_settings(const std::string &key,
                                       const std::string &val) {
   program_settings.setValue(QString::fromStdString(key),
@@ -737,9 +773,12 @@ MainWindow::MainWindow(QWidget *parent)
     : eventclient(this), QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
   //    setFixedSize(geometry().width(), geometry().height());
-
+  option_save_timer = new QTimer(this);
+  option_save_timer->setInterval(4000);
+  QObject::connect(option_save_timer, SIGNAL(timeout()), this, SLOT(saveOptionChanges()));
+  option_save_timer->start();
   active_window = this;
-  //receipt_preview_pixmap = new QPixmap();
+  // receipt_preview_pixmap = new QPixmap();
 
   minimizeAction = new QAction(tr("Mi&nimize"), this);
   connect(minimizeAction, &QAction::triggered, this, &QWidget::hide);
@@ -768,8 +807,8 @@ MainWindow::MainWindow(QWidget *parent)
   program_settings.setDefaultFormat(QSettings::Format::NativeFormat);
 
   GlobalState::setSettingsHooks(read_str_from_settings, read_int_from_settings,
-                                read_bool_from_settings, save_str_to_settings,
-                                save_int_to_settings, save_bool_to_settings);
+                                read_bool_from_settings, scheduleOptionSaveStr,
+                                scheduleOptionSaveInt, scheduleOptionSaveBool);
   GlobalState::loadSettings();
 
   updateGUIControls();
@@ -855,10 +894,9 @@ MainWindow::MainWindow(QWidget *parent)
   } else
     show();
 
-
   ui->receipt_preview_view->setScene(&receipt_preview_scene);
 
-  //receipt_preview_scene.addPixmap(*receipt_preview_pixmap);
+  // receipt_preview_scene.addPixmap(*receipt_preview_pixmap);
 
   //  receipt_preview_scene.setSceneRect(receipt_preview_pixmap->rect());
 
@@ -884,7 +922,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   GlobalState::startNetworkThread();
   t->start();
-    connect(ui->restart_network_button, SIGNAL(clicked()), this,
+  connect(ui->restart_network_button, SIGNAL(clicked()), this,
           SLOT(restartNetworkThread()));
   //    connect(ui->stop_network_button, SIGNAL(clicked()), this,
   //    SLOT(stopNetworkThread()));
@@ -937,7 +975,7 @@ void MainWindow::toggleDisplayPreview(bool checked) {
   else {
     ui->left_printer_tab_spacer->changeSize(0, 20, QSizePolicy::Fixed,
                                             QSizePolicy::Fixed);
-                                            
+
     ui->receipt_preview_view->show();
     scheduleDiplayPreviewUpdate();
   }
