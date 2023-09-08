@@ -200,7 +200,7 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
     }
   }
 
-  auto temp = new char[(max_width * new_height) / 8];
+  char temp[2000000];
   receipt_buf.read(temp, (max_width * new_height) / 8);
   //  strcpy_s((char*)pointer, (max_width*new_height)/8,
   //  receipt_buf.str().data());
@@ -225,7 +225,6 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
   // Use the painter to draw on the page.
 
   painter.end();
-  delete[] temp;
 }
 
 void MainWindow::updatePrintConfigWidget() {

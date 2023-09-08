@@ -57,7 +57,6 @@ PrinterQt::PrinterQt() : eventclient(EventClient(this)) {
   addField(new string_combo_list_field("printer", "Printer",
                                        std::move(printers), 0),
            0);
-  addField(new action_field("settings", "Settings..."), 1);
   addField(new action_field("pagesetup", "Page Setup..."), 2);
 
   addField(new integer_range_field("gamma", "Gamma", 1000, 200, 1000, "slider"),
@@ -67,10 +66,6 @@ PrinterQt::PrinterQt() : eventclient(EventClient(this)) {
   addField(new integer_range_field("max_width", "Max Width", 576, 384, 576,
                                    "slider"),
            4);
-  addField(new integer_range_field("lines_to_feed", "Feed Lines", 0, 0, 20,
-                                   "spinbox"),
-           5);
-  addField(new boolean_field("paper_cut", "Cut Paper", false), 6);
 
   GlobalState::registerPrinter(name, this);
   eventclient.subscribeToEvent("settings_executed");
@@ -201,7 +196,7 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
     }
   }
 
-  auto temp = new char[(max_width*new_height)/8];
+  char temp[2000000];
   receipt_buf.read(temp, (max_width*new_height)/8);
   //  strcpy_s((char*)pointer, (max_width*new_height)/8, receipt_buf.str().data());
 
@@ -223,6 +218,5 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
                     QRect(0, 0, max_width, new_height));
   // Use the painter to draw on the page.
   painter.end();
-  delete [] temp;
   return true;
 }
