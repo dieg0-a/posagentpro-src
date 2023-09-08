@@ -117,9 +117,13 @@ bool PrinterRaw::printJPEG(const jpeg &jpeg_object) {
 }
 
 bool PrinterRaw::openCashDrawer() {
-  return (cash_drawer_supported)
-             ? send_raw(escpos_generator.begin().cashdrawer().end())
-             : true;
+  if (fields.contains("cash_drawer")) {
+    if (fields.at("cash_drawer")->get_int() != 0) {
+      return send_raw(escpos_generator.begin().cashdrawer().end());
+    }
+    return false;
+  } else
+    return false;
 }
 
 PrinterRaw::PrinterRaw() {
@@ -150,6 +154,7 @@ PrinterLinuxUSBRAW::PrinterLinuxUSBRAW() : PrinterRaw() {
                                    "spinbox"),
            4);
   addField(new boolean_field("paper_cut", "Cut Paper", false), 5);
+  addField(new boolean_field("cash_drawer", "Enable Cash Drawer", false), 6);
 
   GlobalState::registerPrinter(name, this);
 }
@@ -162,7 +167,7 @@ bool PrinterLinuxUSBRAW::send_raw(const std::string &buffer) {
   std::fstream file;
   try {
     file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
-    file.open(fields.at("Device")->get_string(), std::ios::in | std::ios::out);
+    file.open(fields.at("device")->get_string(), std::ios::in | std::ios::out);
     file << buffer;
   } catch (const std::ofstream::failure &e) {
     std::cout << "Failure to open or write to Linux USB Raw Printer! Check "

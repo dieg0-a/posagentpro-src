@@ -66,7 +66,7 @@ PrinterQt::PrinterQt() : eventclient(EventClient(this)) {
   addField(new integer_range_field("max_width", "Max Width", 576, 384, 576,
                                    "slider"),
            4);
-
+           
   GlobalState::registerPrinter(name, this);
   eventclient.subscribeToEvent("settings_executed");
   eventclient.subscribeToEvent("pagesetup_executed");
