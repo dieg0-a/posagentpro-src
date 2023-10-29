@@ -21,12 +21,15 @@
 
 extern int bayer_matrix[];
 
-inline double bayer(int i, int j) {
+inline double bayer(int i, int j)
+{
   return double(bayer_matrix[i * 4 + j]) / 64.0;
 }
 
-inline double fastPow(double a, double b) {
-  union {
+inline double fastPow(double a, double b)
+{
+  union
+  {
     double d;
     int x[2];
   } u = {a};
@@ -35,24 +38,28 @@ inline double fastPow(double a, double b) {
   return u.d;
 }
 
-device_status PrinterQt::updateAndGetStatus() {
+device_status PrinterQt::updateAndGetStatus()
+{
+  //if (printer)
   //    return std::filesystem::exists(device()) ? CONNECTED : DISCONNECTED;
+  // return (printer->printerState() == QPrinter::PrinterState::Active || printer->printerState() == QPrinter::PrinterState::Idle) ? CONNECTED : DISCONNECTED;
   return CONNECTED;
 }
 
-PrinterQt::PrinterQt() : eventclient(EventClient(this)) {
+PrinterQt::PrinterQt() : eventclient(EventClient(this))
+{
   name = "System Printer";
   auto qtprinters = QPrinterInfo::availablePrinterNames();
 
   std::vector<std::string> printers;
 
-  for (auto p : qtprinters) {
+  for (auto p : qtprinters)
+  {
     printers.push_back(p.toStdString());
   }
 
-
-//  addField(new string_combo_list_field("printer", "Printer",
-//                                             std::move(printers), 0), 0);
+  //  addField(new string_combo_list_field("printer", "Printer",
+  //                                             std::move(printers), 0), 0);
 
   addField(new string_combo_list_field("printer", "Printer",
                                        std::move(printers), 0),
@@ -62,11 +69,10 @@ PrinterQt::PrinterQt() : eventclient(EventClient(this)) {
   addField(new integer_range_field("gamma", "Gamma", 1000, 200, 1000, "slider"),
            3);
 
-
   addField(new integer_range_field("max_width", "Max Width", 576, 384, 576,
                                    "slider"),
            4);
-           
+
   GlobalState::registerPrinter(name, this);
   eventclient.subscribeToEvent("settings_executed");
   eventclient.subscribeToEvent("pagesetup_executed");
@@ -78,9 +84,12 @@ bool PrinterQt::send_raw(const std::string &buffer) { return true; }
 
 #include "mainwindow.h"
 
-void PrinterQt::onEvent(EventData d) {
-  if (d.name() == "settings_executed") {
-    if (preview_dialog != nullptr) {
+void PrinterQt::onEvent(EventData d)
+{
+  if (d.name() == "settings_executed")
+  {
+    if (preview_dialog != nullptr)
+    {
       delete preview_dialog;
     }
 
@@ -92,18 +101,25 @@ void PrinterQt::onEvent(EventData d) {
     preview_dialog->setWindowTitle(("Print Document"));
 
     preview_dialog->show();
-  } else if (d.name() == "pagesetup_executed") {
-    if (page_setup_dialog != nullptr) {
+  }
+  else if (d.name() == "pagesetup_executed")
+  {
+    if (page_setup_dialog != nullptr)
+    {
       delete page_setup_dialog;
     }
     page_setup_dialog =
         new QPageSetupDialog(printer, MainWindow::active_window);
     page_setup_dialog->setWindowTitle(("Page Setup"));
     page_setup_dialog->show();
-  } else if (d.name() == "qapplication_ready") {
+  }
+  else if (d.name() == "qapplication_ready")
+  {
     printer = new QPrinter(
         QPrinterInfo::printerInfo(fields.at("printer")->get_string().c_str()));
-  } else if (d.name() == "printer_changed") {
+  }
+  else if (d.name() == "printer_changed")
+  {
     if (printer != nullptr)
       delete printer;
     printer = new QPrinter(
@@ -112,7 +128,8 @@ void PrinterQt::onEvent(EventData d) {
 }
 
 bool PrinterQt::printJPEG(const std::string &s) { return true; }
-bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
+bool PrinterQt::printJPEG(const jpeg &jpeg_object)
+{
 
   int max_width = 512;
   std::stringstream receipt_buf;
@@ -128,8 +145,10 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
 
   short bitcounter = 0;
   unsigned char buffer_byte = '\0';
-  for (int i = 0; i < new_height; i++) {
-    for (int j = 0; j < (max_width); j++) {
+  for (int i = 0; i < new_height; i++)
+  {
+    for (int j = 0; j < (max_width); j++)
+    {
 
       double i_s = double(i) * ratio;
       double j_s = double(j) * ratio;
@@ -149,7 +168,8 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
 
       int colorbyte = 0;
 
-      for (int k = 0; k < bytespp; k++) {
+      for (int k = 0; k < bytespp; k++)
+      {
         double c_bottom_left = s[i_bottom][(j_bottom * bytespp) + k];
         double c_bottom_right = s[i_bottom][(j_top * bytespp) + k];
         double c_top_left = s[i_top][(j_bottom * bytespp) + k];
@@ -178,17 +198,22 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
         color = fastPow((color + 0.055) / 1.055, gamma_d / 100.0);
 
       int colorbyte_linear = color * 255.0;
-      if (colorbyte_linear < 0xAA) {
-        if (colorbyte_linear > 0x60) {
-          if (bayer(i % 4, j % 4) * 255 < colorbyte_linear) {
+      if (colorbyte_linear < 0xAA)
+      {
+        if (colorbyte_linear > 0x60)
+        {
+          if (bayer(i % 4, j % 4) * 255 < colorbyte_linear)
+          {
             buffer_byte += (unsigned char)(0x01 << (7 - bitcounter));
           }
         }
-      } else
+      }
+      else
         buffer_byte += (unsigned char)(0x01 << (7 - bitcounter));
 
       bitcounter++;
-      if (bitcounter == 8) {
+      if (bitcounter == 8)
+      {
         bitcounter = 0;
         receipt_buf << buffer_byte;
         buffer_byte = 0;
@@ -197,7 +222,7 @@ bool PrinterQt::printJPEG(const jpeg &jpeg_object) {
   }
 
   char temp[2000000];
-  receipt_buf.read(temp, (max_width*new_height)/8);
+  receipt_buf.read(temp, (max_width * new_height) / 8);
   //  strcpy_s((char*)pointer, (max_width*new_height)/8, receipt_buf.str().data());
 
   QImage i = QImage((unsigned char *)temp, max_width,

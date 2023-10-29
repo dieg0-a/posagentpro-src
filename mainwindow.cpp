@@ -32,12 +32,15 @@ std::map<std::string, bool> MainWindow::bool_to_save;
 
 extern int bayer_matrix[];
 
-inline double bayer(int i, int j) {
+inline double bayer(int i, int j)
+{
   return double(bayer_matrix[i * 4 + j]) / 64.0;
 }
 
-inline double fastPow(double a, double b) {
-  union {
+inline double fastPow(double a, double b)
+{
+  union
+  {
     double d;
     int x[2];
   } u = {a};
@@ -48,10 +51,12 @@ inline double fastPow(double a, double b) {
 
 void MainWindow::setHttpProxyPort(int port) { GlobalState::setHttpPort(port); }
 
-void MainWindow::setComboOption() {
+void MainWindow::setComboOption()
+{
   auto j = qobject_cast<QPushButton *>(sender());
   auto siblings = j->parent()->findChildren<QComboBox *>();
-  for (auto &s : siblings) {
+  for (auto &s : siblings)
+  {
 
     //        GlobalState::printerSetCombo(s->objectName().toStdString(),
     //        s->currentData(Qt::DisplayRole).toString().toStdString());
@@ -61,10 +66,12 @@ void MainWindow::setComboOption() {
   updatePrintConfigWidget();
 }
 
-void MainWindow::setStringOption() {
+void MainWindow::setStringOption()
+{
   auto j = qobject_cast<QPushButton *>(sender());
   auto siblings = j->parent()->findChildren<QLineEdit *>();
-  for (auto &s : siblings) {
+  for (auto &s : siblings)
+  {
 
     GlobalState::printerSetString(s->objectName().toStdString(),
                                   s->text().toStdString());
@@ -72,17 +79,20 @@ void MainWindow::setStringOption() {
   updatePrintConfigWidget();
 }
 
-void MainWindow::setIntOption() {
+void MainWindow::setIntOption()
+{
   auto j = qobject_cast<QPushButton *>(sender());
   auto siblings = j->parent()->findChildren<QLineEdit *>();
-  for (auto &s : siblings) {
+  for (auto &s : siblings)
+  {
     GlobalState::printerSetInt(s->objectName().toStdString(),
                                s->text().toInt());
   }
   updatePrintConfigWidget();
 }
 
-void MainWindow::optionSliderReleased(int value) {
+void MainWindow::optionSliderReleased(int value)
+{
   auto j = qobject_cast<QSlider *>(sender());
   auto slider_bottom_widget = j->parent()->parent()->children().at(2);
   qobject_cast<QLabel *>(slider_bottom_widget->children().at(2))
@@ -90,24 +100,28 @@ void MainWindow::optionSliderReleased(int value) {
   GlobalState::printerSetInt(j->objectName().toStdString(), j->value());
 }
 
-void MainWindow::optionCheckBoxToggled(int value) {
+void MainWindow::optionCheckBoxToggled(int value)
+{
   auto j = qobject_cast<QCheckBox *>(sender());
   GlobalState::printerSetInt(j->objectName().toStdString(), value);
 }
 
-void MainWindow::optionTextChanged(const QString &text) {
+void MainWindow::optionTextChanged(const QString &text)
+{
   auto j = qobject_cast<QLineEdit *>(sender());
   GlobalState::printerSetString(j->objectName().toStdString(),
                                 text.toStdString());
 }
 
-void MainWindow::optionComboChanged(const QString &text) {
+void MainWindow::optionComboChanged(const QString &text)
+{
   auto j = qobject_cast<QComboBox *>(sender());
   GlobalState::printerSetString(j->objectName().toStdString(),
                                 text.toStdString());
 }
 
-void MainWindow::optionButtonClicked() {
+void MainWindow::optionButtonClicked()
+{
   auto j = qobject_cast<QPushButton *>(sender());
 
   EventSystem::instance().emitEvent(
@@ -116,7 +130,8 @@ void MainWindow::optionButtonClicked() {
                 eventclient.getID()));
 }
 
-void MainWindow::paintPrintPreview(QPrinter *printer) {
+void MainWindow::paintPrintPreview(QPrinter *printer)
+{
   int max_width = 512;
   if (GlobalState::getLastReceipt() == nullptr)
     return;
@@ -132,8 +147,10 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
 
   short bitcounter = 0;
   unsigned char buffer_byte = '\0';
-  for (int i = 0; i < new_height; i++) {
-    for (int j = 0; j < (max_width); j++) {
+  for (int i = 0; i < new_height; i++)
+  {
+    for (int j = 0; j < (max_width); j++)
+    {
 
       double i_s = double(i) * ratio;
       double j_s = double(j) * ratio;
@@ -153,7 +170,8 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
 
       int colorbyte = 0;
 
-      for (int k = 0; k < bytespp; k++) {
+      for (int k = 0; k < bytespp; k++)
+      {
         double c_bottom_left = s[i_bottom][(j_bottom * bytespp) + k];
         double c_bottom_right = s[i_bottom][(j_top * bytespp) + k];
         double c_top_left = s[i_top][(j_bottom * bytespp) + k];
@@ -182,17 +200,22 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
         color = fastPow((color + 0.055) / 1.055, gamma_d / 100.0);
 
       int colorbyte_linear = color * 255.0;
-      if (colorbyte_linear < 0xAA) {
-        if (colorbyte_linear > 0x60) {
-          if (bayer(i % 4, j % 4) * 255 < colorbyte_linear) {
+      if (colorbyte_linear < 0xAA)
+      {
+        if (colorbyte_linear > 0x60)
+        {
+          if (bayer(i % 4, j % 4) * 255 < colorbyte_linear)
+          {
             buffer_byte += (unsigned char)(0x01 << (7 - bitcounter));
           }
         }
-      } else
+      }
+      else
         buffer_byte += (unsigned char)(0x01 << (7 - bitcounter));
 
       bitcounter++;
-      if (bitcounter == 8) {
+      if (bitcounter == 8)
+      {
         bitcounter = 0;
         receipt_buf << buffer_byte;
         buffer_byte = 0;
@@ -227,7 +250,8 @@ void MainWindow::paintPrintPreview(QPrinter *printer) {
   painter.end();
 }
 
-void MainWindow::updatePrintConfigWidget() {
+void MainWindow::updatePrintConfigWidget()
+{
   // auto temp = ui->printer_driver_settings;
   auto printer_driver_settings =
       new QWidget(ui->printer_driver_settings_scroll_area);
@@ -247,8 +271,10 @@ void MainWindow::updatePrintConfigWidget() {
   auto vl = new QVBoxLayout();
   p_settings_top_widget->setLayout(vl);
 
-  for (auto &options : GlobalState::getCurrentPrinter()->getFieldsByOrder()) {
-    if (options.second->get_type() == STRING) {
+  for (auto &options : GlobalState::getCurrentPrinter()->getFieldsByOrder())
+  {
+    if (options.second->get_type() == STRING)
+    {
       auto string_field = new QWidget(p_settings_top_widget);
       auto hl = new QHBoxLayout();
       hl->setSpacing(0);
@@ -272,7 +298,9 @@ void MainWindow::updatePrintConfigWidget() {
                        SLOT(optionTextChanged(const QString &)));
 
       string_field->setMaximumHeight(40);
-    } else if (options.second->get_type() == INTEGER) {
+    }
+    else if (options.second->get_type() == INTEGER)
+    {
       auto number_field = new QWidget(p_settings_top_widget);
       p_settings_top_widget->layout()->addWidget(number_field);
       number_field->setLayout(new QHBoxLayout());
@@ -293,10 +321,13 @@ void MainWindow::updatePrintConfigWidget() {
                        SLOT(optionTextChanged(const QString &)));
 
       number_field->setMaximumHeight(50);
-    } else if (options.second->get_type() == INTEGER_RANGE) {
+    }
+    else if (options.second->get_type() == INTEGER_RANGE)
+    {
       integer_range_field *r = (integer_range_field *)options.second;
 
-      if (r->get_widget_type() == "lineedit") {
+      if (r->get_widget_type() == "lineedit")
+      {
         auto number_field = new QWidget(p_settings_top_widget);
         p_settings_top_widget->layout()->addWidget(number_field);
         number_field->setLayout(new QHBoxLayout());
@@ -312,7 +343,9 @@ void MainWindow::updatePrintConfigWidget() {
         input->setObjectName(options.second->name().c_str());
         number_field->layout()->addWidget(input);
         input->setText(QString::number(options.second->get_int()));
-      } else if (r->get_widget_type() == "spinbox") {
+      }
+      else if (r->get_widget_type() == "spinbox")
+      {
         auto number_field = new QWidget(p_settings_top_widget);
         p_settings_top_widget->layout()->addWidget(number_field);
         number_field->setLayout(new QHBoxLayout());
@@ -327,7 +360,9 @@ void MainWindow::updatePrintConfigWidget() {
         input->setValue(options.second->get_int());
         input->setObjectName(options.second->name().c_str());
         number_field->layout()->addWidget(input);
-      } else if (r->get_widget_type() == "slider") {
+      }
+      else if (r->get_widget_type() == "slider")
+      {
         auto number_field = new QWidget(p_settings_top_widget);
         p_settings_top_widget->layout()->addWidget(number_field);
         number_field->setLayout(new QVBoxLayout());
@@ -390,7 +425,9 @@ void MainWindow::updatePrintConfigWidget() {
                 SLOT(optionSliderReleased(int)));
         input->setTracking(true);
       }
-    } else if (options.second->get_type() == COMBO_LIST_STRING) {
+    }
+    else if (options.second->get_type() == COMBO_LIST_STRING)
+    {
       string_combo_list_field *combo =
           (string_combo_list_field *)options.second;
       auto combo_widget = new QWidget(p_settings_top_widget);
@@ -416,8 +453,9 @@ void MainWindow::updatePrintConfigWidget() {
       connect(combo_field, SIGNAL(currentTextChanged(const QString &)), this,
               SLOT(optionComboChanged(const QString &)));
       combo_widget->setMaximumHeight(50);
-
-    } else if (options.second->get_type() == BOOLEAN_FIELD) {
+    }
+    else if (options.second->get_type() == BOOLEAN_FIELD)
+    {
       auto boolean_field = new QWidget(p_settings_top_widget);
       auto hl = new QHBoxLayout();
       hl->setSpacing(0);
@@ -439,7 +477,9 @@ void MainWindow::updatePrintConfigWidget() {
       input->setFixedWidth(20);
       QObject::connect(input, SIGNAL(stateChanged(int)), this,
                        SLOT(optionCheckBoxToggled(int)));
-    } else if (options.second->get_type() == ACTION) {
+    }
+    else if (options.second->get_type() == ACTION)
+    {
       auto button = new QWidget(p_settings_top_widget);
       auto hl = new QHBoxLayout();
       hl->setSpacing(0);
@@ -464,18 +504,21 @@ void MainWindow::updatePrintConfigWidget() {
   static_cast<QVBoxLayout *>(p_settings_top_widget->layout())->addStretch();
 }
 
-void MainWindow::gammaUpdated(EventData data) {
+void MainWindow::gammaUpdated(EventData data)
+{
   std::cout << "Gamma Updated event received!\n";
   std::cout << "With sender ID: " << data.sender() << std::endl;
   std::cout << "Event name: " << data.name() << std::endl;
   auto new_gamma = data.get_int();
-  if (new_gamma != gamma) {
+  if (new_gamma != gamma)
+  {
     gamma = new_gamma;
     scheduleDiplayPreviewUpdate();
   }
 }
 
-void MainWindow::updateReceiptPreview() {
+void MainWindow::updateReceiptPreview()
+{
   if (!display_preview_update_schedule)
     return;
   else
@@ -501,8 +544,10 @@ void MainWindow::updateReceiptPreview() {
   short bitcounter = 0;
   int bytecounter = 0;
   unsigned char buffer_byte = '\0';
-  for (int i = 0; i < new_height; i++) {
-    for (int j = 0; j < (max_width); j++) {
+  for (int i = 0; i < new_height; i++)
+  {
+    for (int j = 0; j < (max_width); j++)
+    {
 
       double i_s = double(i) * ratio;
       double j_s = double(j) * ratio;
@@ -522,7 +567,8 @@ void MainWindow::updateReceiptPreview() {
 
       int colorbyte = 0;
 
-      for (int k = 0; k < bytespp; k++) {
+      for (int k = 0; k < bytespp; k++)
+      {
         double c_bottom_left = s[i_bottom][(j_bottom * bytespp) + k];
         double c_bottom_right = s[i_bottom][(j_top * bytespp) + k];
         double c_top_left = s[i_top][(j_bottom * bytespp) + k];
@@ -551,17 +597,22 @@ void MainWindow::updateReceiptPreview() {
         color = fastPow((color + 0.055) / 1.055, gamma_d / 100.0);
 
       int colorbyte_linear = color * 255.0;
-      if (colorbyte_linear < 0xAA) {
-        if (colorbyte_linear > 0x60) {
-          if (bayer(i % 4, j % 4) * 255 < colorbyte_linear) {
+      if (colorbyte_linear < 0xAA)
+      {
+        if (colorbyte_linear > 0x60)
+        {
+          if (bayer(i % 4, j % 4) * 255 < colorbyte_linear)
+          {
             buffer_byte += (unsigned char)(0x01 << (7 - bitcounter));
           }
         }
-      } else
+      }
+      else
         buffer_byte += (unsigned char)(0x01 << (7 - bitcounter));
 
       bitcounter++;
-      if (bitcounter == 8) {
+      if (bitcounter == 8)
+      {
         bitcounter = 0;
         // receipt_buf << buffer_byte;
         receipt_preview_image_data[bytecounter] = buffer_byte;
@@ -623,17 +674,22 @@ void MainWindow::updateReceiptPreview() {
   //       ui->receipt_preview_view->update();
 }
 
-void MainWindow::refreshTimer() {
-  if (GlobalState::processQueue()) {
+void MainWindow::refreshTimer()
+{
+  if (GlobalState::processQueue())
+  {
     if (showpreview)
       scheduleDiplayPreviewUpdate();
   }
 
-  if (GlobalState::getPrinterStatus() == CONNECTED) {
+  if (GlobalState::getPrinterStatus() == CONNECTED)
+  {
     printer_status_icon_label->setPixmap(
         printer_status_on_icon->pixmap(16, 16));
     printer_status_label->setText("Printer ON ");
-  } else {
+  }
+  else
+  {
     printer_status_icon_label->setPixmap(
         printer_status_off_icon->pixmap(16, 16));
     printer_status_label->setText("Printer OFF");
@@ -646,14 +702,17 @@ void MainWindow::refreshTimer() {
 void MainWindow::startNetworkThread() { GlobalState::startNetworkThread(); }
 void MainWindow::stopNetworkThread() { GlobalState::stopNetworkThread(); }
 
-void MainWindow::restartNetworkThread() {
+void MainWindow::restartNetworkThread()
+{
   GlobalState::stopNetworkThread();
   GlobalState::startNetworkThread();
 }
 
 bool MainWindow::read_str_from_settings(const std::string &key,
-                                        std::string &val) {
-  if (program_settings.contains(key.c_str())) {
+                                        std::string &val)
+{
+  if (program_settings.contains(key.c_str()))
+  {
     auto v = program_settings.value(QString::fromStdString(key));
     val = v.toString().toStdString();
     return true;
@@ -661,17 +720,22 @@ bool MainWindow::read_str_from_settings(const std::string &key,
   return false;
 }
 
-bool MainWindow::read_int_from_settings(const std::string &key, int &val) {
-  if (program_settings.contains(key.c_str())) {
+bool MainWindow::read_int_from_settings(const std::string &key, int &val)
+{
+  if (program_settings.contains(key.c_str()))
+  {
     auto v = program_settings.value(QString::fromStdString(key));
     val = v.toInt();
     return true;
-  } else
+  }
+  else
     return false;
 }
 
-bool MainWindow::read_bool_from_settings(const std::string &key, bool &val) {
-  if (program_settings.contains(key.c_str())) {
+bool MainWindow::read_bool_from_settings(const std::string &key, bool &val)
+{
+  if (program_settings.contains(key.c_str()))
+  {
     auto v = program_settings.value(QString::fromStdString(key));
     val = v.toBool();
     return true;
@@ -679,14 +743,18 @@ bool MainWindow::read_bool_from_settings(const std::string &key, bool &val) {
   return false;
 }
 
-void MainWindow::saveOptionChanges() {
-  for (auto [name, value] : str_to_save) {
+void MainWindow::saveOptionChanges()
+{
+  for (auto [name, value] : str_to_save)
+  {
     save_str_to_settings(name, value);
   }
-  for (auto [name, value] : int_to_save) {
+  for (auto [name, value] : int_to_save)
+  {
     save_int_to_settings(name, value);
   }
-  for (auto [name, value] : bool_to_save) {
+  for (auto [name, value] : bool_to_save)
+  {
     save_bool_to_settings(name, value);
   }
   str_to_save.clear();
@@ -695,66 +763,81 @@ void MainWindow::saveOptionChanges() {
 }
 
 bool MainWindow::scheduleOptionSaveStr(const std::string &name,
-                                       const std::string &value) {
+                                       const std::string &value)
+{
   str_to_save[name] = value;
   return true;
 };
-bool MainWindow::scheduleOptionSaveInt(const std::string &name, int value) {
+bool MainWindow::scheduleOptionSaveInt(const std::string &name, int value)
+{
   int_to_save[name] = value;
   return true;
 };
-bool MainWindow::scheduleOptionSaveBool(const std::string &name, bool value) {
+bool MainWindow::scheduleOptionSaveBool(const std::string &name, bool value)
+{
   bool_to_save[name] = value;
   return true;
 };
 
 bool MainWindow::save_str_to_settings(const std::string &key,
-                                      const std::string &val) {
+                                      const std::string &val)
+{
   program_settings.setValue(QString::fromStdString(key),
                             QString::fromStdString(val));
   return true;
 }
 
-bool MainWindow::save_int_to_settings(const std::string &key, int val) {
+bool MainWindow::save_int_to_settings(const std::string &key, int val)
+{
   program_settings.setValue(QString::fromStdString(key), val);
   return true;
 }
 
-bool MainWindow::save_bool_to_settings(const std::string &key, bool val) {
+bool MainWindow::save_bool_to_settings(const std::string &key, bool val)
+{
   program_settings.setValue(QString::fromStdString(key), val);
   return true;
 }
 
-inline void MainWindow::updateGUIControls() {
+inline void MainWindow::updateGUIControls()
+{
   ui->http_port_spinbox->setValue(GlobalState::getHttpPort());
 }
 
-void MainWindow::updatePrinterDriver(int index) {
+void MainWindow::updatePrinterDriver(int index)
+{
   GlobalState::setCurrentPrinter(index);
   updatePrintConfigWidget();
   updateGUIControls();
   auto fields = GlobalState::getCurrentPrinter()->getFieldsByName();
-  if (fields.contains("gamma")) {
+  if (fields.contains("gamma"))
+  {
     gamma = fields["gamma"]->get_int();
     scheduleDiplayPreviewUpdate();
   }
 }
 
-void MainWindow::setStartInTray(int state) {
+void MainWindow::setStartInTray(int state)
+{
   program_settings.setValue("start_in_tray",
                             state == Qt::CheckState::Checked ? true : false);
 }
 
-void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
-  if (reason == QSystemTrayIcon::Trigger) {
-    if (this->isHidden() || this->isMinimized()) {
+void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+  if (reason == QSystemTrayIcon::Trigger)
+  {
+    if (this->isHidden() || this->isMinimized())
+    {
       this->showNormal();
-    } else
+    }
+    else
       this->hide();
   }
 }
 
-void MainWindow::setDemoMode() {
+void MainWindow::setDemoMode()
+{
   demo_mode_last = GlobalState::demo_mode;
   if (demo_mode_last)
     demo_mode_on_off->setText("Demo mode: ON ");
@@ -762,14 +845,16 @@ void MainWindow::setDemoMode() {
     demo_mode_on_off->setText("Demo mode: OFF");
 }
 
-void MainWindow::closeApplication() {
+void MainWindow::closeApplication()
+{
   closing = true;
   showNormal(); //// Workaround for Windows
   close();
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : eventclient(this), QMainWindow(parent), ui(new Ui::MainWindow) {
+    : eventclient(this), QMainWindow(parent), ui(new Ui::MainWindow)
+{
   ui->setupUi(this);
   //    setFixedSize(geometry().width(), geometry().height());
   option_save_timer = new QTimer(this);
@@ -847,11 +932,14 @@ MainWindow::MainWindow(QWidget *parent)
 
   GlobalState::updatePrinterStatus();
 
-  if (GlobalState::getPrinterStatus() == CONNECTED) {
+  if (GlobalState::getPrinterStatus() == CONNECTED)
+  {
     printer_status_icon_label->setPixmap(
         printer_status_on_icon->pixmap(16, 16));
     printer_status_label->setText("Printer ON ");
-  } else {
+  }
+  else
+  {
     printer_status_icon_label->setPixmap(
         printer_status_off_icon->pixmap(16, 16));
     printer_status_label->setText("Printer OFF");
@@ -882,7 +970,8 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(t, SIGNAL(timeout()), this, SLOT(refreshTimer()));
 
-  if (program_settings.contains("start_in_tray")) {
+  if (program_settings.contains("start_in_tray"))
+  {
     bool tray = program_settings.value("start_in_tray").toBool();
     if (tray)
       hide();
@@ -890,7 +979,8 @@ MainWindow::MainWindow(QWidget *parent)
       show();
     ui->start_in_tray->setCheckState(tray ? Qt::CheckState::Checked
                                           : Qt::CheckState::Unchecked);
-  } else
+  }
+  else
     show();
 
   ui->receipt_preview_view->setScene(&receipt_preview_scene);
@@ -919,6 +1009,10 @@ MainWindow::MainWindow(QWidget *parent)
 
   toggleDisplayPreview(showpreview);
 
+  about = new QDialog();
+  Ui_Dialog aboutUi;
+  aboutUi.setupUi(about);
+
   GlobalState::startNetworkThread();
   t->start();
   connect(ui->restart_network_button, SIGNAL(clicked()), this,
@@ -935,43 +1029,63 @@ MainWindow::MainWindow(QWidget *parent)
           SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(ui->show_preview_button, SIGNAL(toggled(bool)), this,
           SLOT(toggleDisplayPreview(bool)));
+  connect(ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT(showAbout(bool)));
+
+  gamma = GlobalState::getCurrentPrinter()->getField("gamma")->get_int();
+  scheduleDiplayPreviewUpdate();
+
   eventclient.subscribeToEvent("gamma_changed");
   EventSystem::instance().emitEvent(
       "qapplication_ready",
       EventData("qapplication_ready", eventclient.getID()));
 }
 
-void MainWindow::scheduleDiplayPreviewUpdate() {
+void MainWindow::showAbout(bool toggled)
+{
+  about->show();
+}
+
+void MainWindow::scheduleDiplayPreviewUpdate()
+{
   display_preview_update_schedule = true;
 }
 
-void MainWindow::onEvent(EventData d) {
-  if (d.name() == "gamma_changed") {
+void MainWindow::onEvent(EventData d)
+{
+  if (d.name() == "gamma_changed")
+  {
     gammaUpdated(d);
   }
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-  if (closing) {
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+  if (closing)
+  {
     GlobalState::stopNetworkThread();
     close();
     event->accept();
-  } else {
+  }
+  else
+  {
     hide();
     event->ignore();
   }
 }
 
-void MainWindow::toggleDisplayPreview(bool checked) {
+void MainWindow::toggleDisplayPreview(bool checked)
+{
   showpreview = checked;
   save_bool_to_settings("show_preview_window", showpreview);
-  if (!checked) {
+  if (!checked)
+  {
     ui->receipt_preview_view->hide();
     ui->left_printer_tab_spacer->changeSize(0, 20, QSizePolicy::Expanding,
                                             QSizePolicy::Fixed);
   }
 
-  else {
+  else
+  {
     ui->left_printer_tab_spacer->changeSize(0, 20, QSizePolicy::Fixed,
                                             QSizePolicy::Fixed);
 

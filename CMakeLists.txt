@@ -22,7 +22,7 @@ set(PROJECT_SOURCES
         main.cpp json.cpp printer.cpp json.hpp printer.hpp escpos.cpp
         escpos.hpp base64.hpp jpeg.cpp jpeg.hpp jpeg_load.c httptime.cpp
         httptime.hpp base64.cpp windows_printer.cpp mainwindow.h
-        mainwindow.cpp mainwindow.ui mainwindow.cpp mainwindow.h
+        mainwindow.cpp mainwindow.ui about.ui mainwindow.cpp mainwindow.h
         messagesystem.h messagesystem.cpp printercombofieldmodel.h
         printercombofieldmodel.cpp printerdriverlistmodel.h
         printerdriverlistmodel.cpp resources.cpp resources.h

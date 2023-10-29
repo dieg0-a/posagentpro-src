@@ -10,12 +10,14 @@
 #include <QPrinter>
 #include <QSettings>
 #include <QSystemTrayIcon>
+#include <QDialog>
 
 #include <map>
 
 #include <sstream>
 
 #include "eventclient.h"
+#include "ui_about.h"
 
 namespace Ui {
 class MainWindow;
@@ -63,6 +65,7 @@ public slots:
   void scheduleDiplayPreviewUpdate();
   void paintPrintPreview(QPrinter *printer);
   void saveOptionChanges();
+  void showAbout(bool toggled);
 
 private:
   Ui::MainWindow *ui;
@@ -72,6 +75,8 @@ private:
   QAction *maximizeAction;
   QAction *restoreAction;
   QAction *minimizeAction;
+
+  QDialog *about;
 
   QMenu *trayIconMenu;
 

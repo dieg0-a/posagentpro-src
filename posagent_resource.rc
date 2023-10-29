@@ -1,6 +1,6 @@
 #include <windows.h>
 
-IDI_ICON1	ICON	"C:\\Users\\user\\Desktop\\test\\posagentpro-src\\images\\printagent_icon_big.ico"
+IDI_ICON1	ICON	"C:\\Users\\user\\Desktop\\posagentpro-src\\images\\printagent_icon_big.ico"
 
 VS_VERSION_INFO VERSIONINFO
 	FILEVERSION 0,0,0,0
