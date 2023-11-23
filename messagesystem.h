@@ -1,19 +1,19 @@
 #ifndef MESSAGESYSTEM_H
 #define MESSAGESYSTEM_H
+#include "printer.hpp"
+#include "qtprinter.hpp"
 #include <queue>
 #include <string>
 #include <thread>
-#include "qtprinter.hpp"
-#include "printer.hpp"
 
 #include "windowsprinter.h"
-
-
 
 #include <mutex>
 
 #include "App.h"
 #include "jpeg.hpp"
+
+#include "globals.hpp"
 
 int networkThread(int);
 
@@ -23,7 +23,7 @@ enum json_rpc_type {
   PROXY_STATUS,
   PRINTER_DEFAULT_ACTION
 };
-enum print_job_type { JPEG, CASHDRAWER };
+enum print_job_type { JPEG, CASHDRAWER, LABEL };
 
 class GlobalState {
 private:
@@ -32,7 +32,11 @@ private:
   static int current_printer_index;
   static Printer *selected_printer;
   static std::queue<std::pair<std::string, print_job_type>> raw_job_queue;
+  static std::queue<label_info> label_job_queue;
+
   static std::map<std::string, Printer *> printer_drivers;
+
+  static Printer *label_printer_driver;
 
   static std::thread *network_thread;
   static us_listen_socket_t *http_server_socket;
@@ -65,6 +69,7 @@ private:
 #ifdef __linux__
   static PrinterLinuxUSBRAW linux_usb_print;
   static PrinterThermalLinuxTCPIP linux_ip_print;
+  static LabelPrinterLinuxUSBRAW linux_label_printer;
 #endif
   static PrinterQt qt_printer;
 
@@ -85,15 +90,22 @@ public:
       return 0;
   };
 
-  static void printerSetName(const std::string &n) {
+  static void printerSetName(const std::string &n, bool label = false) {
     state_mutex.lock();
     if (selected_printer != nullptr)
       selected_printer->setName(n);
     state_mutex.unlock();
   };
 
-  static void printerSetInt(std::string name, int i) {
-    if (selected_printer != nullptr) {
+  static void printerSetInt(std::string name, int i, bool label = false) {
+    if (label) {
+      if (label_printer_driver)
+        label_printer_driver->setInt(name, i);
+      if (autosave)
+        int_to_settings(
+            "printer_" + label_printer_driver->getName() + "_field_" + name, i);
+
+    } else if (selected_printer != nullptr) {
       selected_printer->setInt(name, i);
       if (autosave)
         int_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name,
@@ -101,8 +113,16 @@ public:
     }
   };
 
-  static void printerSetString(std::string name, std::string s) {
-    if (selected_printer != nullptr) {
+  static void printerSetString(std::string name, std::string s,
+                               bool label = false) {
+    if (label) {
+      if (label_printer_driver)
+        label_printer_driver->setString(name, s);
+      if (autosave)
+        str_to_settings(
+            "printer_" + label_printer_driver->getName() + "_field_" + name, s);
+
+    } else if (selected_printer != nullptr) {
       selected_printer->setString(name, s);
       if (autosave)
         str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name,
@@ -110,8 +130,15 @@ public:
     }
   };
 
-  static void printerSetIndex(std::string name, int index) {
-    if (selected_printer != nullptr) {
+  static void printerSetIndex(std::string name, int index, bool label = false) {
+    if (label) {
+      auto str = label_printer_driver->setIndex(name, index);
+      if (autosave)
+        str_to_settings("printer_" + label_printer_driver->getName() +
+                            "_field_" + name,
+                        str);
+
+    } else if (selected_printer != nullptr) {
       auto str = selected_printer->setIndex(name, index);
       if (autosave)
         str_to_settings("printer_" + getCurrentPrinterName() + "_field_" + name,
@@ -247,6 +274,12 @@ public:
     }
   };
 
+  static void registerLabelPrinter(std::string name, Printer *p) {
+    state_mutex.lock();
+    label_printer_driver = p;
+    state_mutex.unlock();
+  };
+
   static void setCurrentPrinter(std::string name) {
     int i = 0;
     auto p = printer_drivers.begin();
@@ -280,6 +313,7 @@ public:
   }
 
   static Printer *getCurrentPrinter() { return selected_printer; };
+  static Printer *getLabelPrinter() { return label_printer_driver; };
 
   static std::string getCurrentPrinterName();
 
@@ -302,6 +336,8 @@ public:
   }
   static bool enqueuePrintJob(std::string &&rawdata, print_job_type type);
   //    static bool enqueuePrintJob(std::string &rawdata, print_job_type type);
+
+  static bool enqueueLabelPrintJob(label_info info);
 
   static bool enqueueJPEGPrintJob(std::string &rawdata);
 

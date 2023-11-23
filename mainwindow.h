@@ -11,6 +11,7 @@
 #include <QSettings>
 #include <QSystemTrayIcon>
 #include <QDialog>
+#include <QScrollArea>
 
 #include <map>
 
@@ -22,6 +23,8 @@
 namespace Ui {
 class MainWindow;
 }
+
+class Printer;
 
 class MainWindow : public QMainWindow, Object {
   Q_OBJECT
@@ -41,15 +44,34 @@ public:
   void onEvent(EventData d);
 
 public slots:
-  void setComboOption();
-  void setStringOption();
-  void setIntOption();
-  void optionSliderReleased(int value);
-  void optionCheckBoxToggled(int value);
-  void optionTextChanged(const QString &text);
-  void optionComboChanged(const QString &text);
+  void setComboOption(bool label = false);
+  void setStringOption(bool label = false);
+  void setIntOption(bool label = false);
+  void optionSliderReleased(int value, bool label = false);
+  void optionCheckBoxToggled(int value, bool label = false);
+  void optionTextChanged(const QString &text, bool label = false);
+  void optionComboChanged(const QString &text, bool label = false);
+
+
+  void setComboOptionPrinter() {setComboOption();};
+  void setStringOptionPrinter() {setStringOption();};
+  void setIntOptionPrinter() {setIntOption();};
+  void optionSliderReleasedPrinter(int value) {optionSliderReleased(value);};
+  void optionCheckBoxToggledPrinter(int value) {optionCheckBoxToggled(value);};
+  void optionTextChangedPrinter(const QString &text) {optionTextChanged(text);};
+  void optionComboChangedPrinter(const QString &text) {optionComboChanged(text);};
+
+
+  void setComboOptionLabel() {setComboOption(true);};
+  void setStringOptionLabel() {setStringOption(true);};
+  void setIntOptionLabel() {setIntOption(true);};
+  void optionSliderReleasedLabel(int value) {optionSliderReleased(value, true);};
+  void optionCheckBoxToggledLabel(int value) {optionCheckBoxToggled(value, true);};
+  void optionTextChangedLabel(const QString &text) {optionTextChanged(text, true);};
+  void optionComboChangedLabel(const QString &text) {optionComboChanged(text, true);};
+
   void optionButtonClicked();
-  void updatePrintConfigWidget();
+  void updatePrintConfigWidget(QScrollArea *parent, Printer *printer, bool label=false);
   void refreshTimer();
   void startNetworkThread();
   void stopNetworkThread();

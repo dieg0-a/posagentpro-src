@@ -1,0 +1,28 @@
+{
+    "jsonrpc": "2.0",
+    "method": "call",
+    "params": {
+        "data": {
+            "action": "print_label",
+            "label": {
+                "pname": "CINTA DE PAPEL 24mm x 50mts.STIKO(x36)",
+                "unitprice": 1120.51,
+                "pricepoints": {
+                    "1": {
+                        "total": 1120.51,
+                        "unit": 1120.51
+                    },
+                    "5": {
+                        "total": 5202.35,
+                        "unit": 1040.47
+                    },
+                    "36": {
+                        "total": 34575.840000000004,
+                        "unit": 960.44
+                    }
+                }
+            }
+        }
+    },
+    "id": 613060623
+}

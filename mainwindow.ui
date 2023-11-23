@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1058</width>
+    <width>1056</width>
     <height>824</height>
    </rect>
   </property>
@@ -167,8 +167,8 @@
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>392</width>
-                      <height>446</height>
+                      <width>388</width>
+                      <height>413</height>
                      </rect>
                     </property>
                    </widget>
@@ -267,6 +267,51 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_labelprinter">
+       <attribute name="title">
+        <string>Label Printer Configuration</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QCheckBox" name="use_label_printer">
+          <property name="text">
+           <string>Use label printer</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="group_use_label_printer">
+          <property name="title">
+           <string>GroupBox</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QScrollArea" name="scroll_area_use_label_printer">
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>990</width>
+                <height>518</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <item>
+                <widget class="QWidget" name="label_printer_settings" native="true"/>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
     <item>
@@ -326,8 +371,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1058</width>
-     <height>22</height>
+     <width>1056</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">

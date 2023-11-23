@@ -1,4 +1,5 @@
-﻿#include <string>
+﻿#include "globals.hpp"
+#include <string>
 #ifdef __linux__
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -77,13 +78,14 @@ public:
     }
   };
 
-  void addField(input_field *field, int order)
-  {
+  void addField(input_field *field, int order) {
     fields.emplace(field->name(), field);
     field_map.emplace(std::make_pair(order, field));
   }
 
-  input_field const *getField(std::string name) const { return fields.at(name); }
+  input_field const *getField(std::string name) const {
+    return fields.at(name);
+  }
 
   //    int getInt(std::string name) const;
   //    std::string getString(std::string name) const;
@@ -92,6 +94,7 @@ public:
 
   virtual bool printJPEG(const std::string &s);
   virtual bool printJPEG(const jpeg &jpeg_object);
+  virtual bool printLabel(label_info info);
 
   virtual ~Printer(){};
 
@@ -161,6 +164,7 @@ public:
 
   bool printJPEG(const std::string &s);
   bool printJPEG(const jpeg &jpeg_object);
+  bool printLabel(label_info info);
 };
 
 class PrinterDummy : public Printer {
@@ -214,4 +218,16 @@ public:
   bool send_raw(const std::string &buffer);
   ~PrinterThermalLinuxTCPIP(){};
 };
+
+class LabelPrinterLinuxUSBRAW : public PrinterRaw {
+public:
+  std::string device() { return fields.at("device")->get_string(); };
+  LabelPrinterLinuxUSBRAW();
+  device_status updateAndGetStatus();
+  bool send_raw(const std::string &buffer);
+  ~LabelPrinterLinuxUSBRAW(){};
+
+  bool printLabel(label_info info);
+};
+
 #endif
