@@ -10,7 +10,7 @@ class PrinterWindowsSpooler : public PrinterRaw {
 private:
     std::string name;
 public:
-    PrinterWindowsSpooler();
+    PrinterWindowsSpooler(bool label = false);
     std::string getName() const {
         return name;
     };

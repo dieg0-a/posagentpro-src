@@ -119,7 +119,106 @@ bool PrinterRaw::printJPEG(const jpeg &jpeg_object) {
   return send_raw(output);
 }
 
-bool PrinterRaw::printLabel(label_info info) { return true; }
+std::string UTF8toISO8859_1(const char *in) {
+  std::string out;
+  if (in == NULL)
+    return out;
+
+  unsigned int codepoint;
+  while (*in != 0) {
+    unsigned char ch = static_cast<unsigned char>(*in);
+    if (ch <= 0x7f)
+      codepoint = ch;
+    else if (ch <= 0xbf)
+      codepoint = (codepoint << 6) | (ch & 0x3f);
+    else if (ch <= 0xdf)
+      codepoint = ch & 0x1f;
+    else if (ch <= 0xef)
+      codepoint = ch & 0x0f;
+    else
+      codepoint = ch & 0x07;
+    ++in;
+    if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff)) {
+      if (codepoint <= 255) {
+        out.append(1, static_cast<char>(codepoint));
+      } else {
+        // do whatever you want for out-of-bounds characters
+      }
+    }
+  }
+  return out;
+}
+
+bool PrinterRaw::printLabel(label_info info) {
+  std::stringstream output;
+  output << "N\n";
+
+  std::string pname = UTF8toISO8859_1(info.pname.c_str());
+
+  // Vector of string to save tokens
+  std::vector<std::string> tokens;
+
+  // stringstream class check1
+  std::stringstream check1(pname);
+  std::string intermediate;
+
+  // Tokenizing w.r.t. space ' '
+  while (getline(check1, intermediate, ' ')) {
+    tokens.push_back(intermediate);
+  }
+
+  // Printing the token vector
+  int linepos = 0;
+  int linenumber = 1;
+  int lineoffset = 3;
+
+  int linewidth = info.printprice ? 12 : 22;
+
+  output << "A8," << 2 << ",0,1,3,1,N,\"TUTTIPACK\"\n";
+
+  if (tokens.size() > 0)
+    output << "A2," << linenumber * 20 + lineoffset << ",0,2,1,1,N,\"";
+  for (int i = 0; i < tokens.size(); i++) {
+    if (linenumber > 2) linewidth = 22;
+    int wordwidth =
+        (tokens[i].size() <= linewidth - 1 ? tokens[i].size() : linewidth - 1);
+    if (linepos + (wordwidth + 1) > linewidth) {
+      linenumber++;
+      if (linenumber > 2)
+      {
+        linewidth = 22;
+        wordwidth = (tokens[i].size() <= linewidth - 1 ? tokens[i].size() : linewidth - 1);
+      } 
+      output << "\"\n";
+      output << "A2," << linenumber * 20 + lineoffset << ",0,2,1,1,N,\"";
+      linepos = wordwidth;
+    } else
+      linepos += wordwidth;
+    for (int j = 0; j < wordwidth; j++) {
+      if (tokens[i][j] == '\"') {
+        output << "\\\"";
+      } else
+        output << tokens[i][j];
+    }
+    output << " ";
+  }
+  output << "\"\n";
+
+  if (info.printprice) {
+    output.precision(2);
+    output << "A160," << 25 << ",0,2,1,2,N,\"$ " << std::fixed << info.unitprice
+           << "\"\n";
+  }
+
+  if (info.barcode != "")
+    output << "B8,105,0,1,2,3,40,N,\"" + info.barcode + "\"\n";
+  output << "P1\n";
+
+  //std::cout << "Output Buffer: \n" << output.str();
+  return send_raw(output.str());
+  //return true;
+
+};
 
 bool PrinterRaw::openCashDrawer() {
   if (fields.contains("cash_drawer")) {

@@ -117,7 +117,7 @@ const std::string PrinterDefaultAction(const char *request) {
                     std::string receipt_string =
                         std::string(receipt.GetString());
                     // DEBUG
-
+/*
                     std::fstream file;
                     try {
                       file.exceptions(std::ofstream::badbit |
@@ -137,7 +137,7 @@ const std::string PrinterDefaultAction(const char *request) {
                     }
                     if (file.is_open())
                       file.close();
-
+*/
                     // DEBUG
                     GlobalState::enqueuePrintJob(base64::Decode(receipt_string),
                                                  JPEG);

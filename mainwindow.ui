@@ -64,7 +64,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_printer">
        <attribute name="title">
@@ -168,7 +168,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>388</width>
-                      <height>413</height>
+                      <height>430</height>
                      </rect>
                     </property>
                    </widget>
@@ -274,6 +274,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QCheckBox" name="use_label_printer">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Use label printer</string>
           </property>
@@ -296,7 +299,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>990</width>
-                <height>518</height>
+                <height>533</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -372,7 +375,7 @@
      <x>0</x>
      <y>0</y>
      <width>1056</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">

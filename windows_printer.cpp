@@ -199,7 +199,6 @@ bool PrinterWindowsSpooler::send_raw(const std::string &buffer2)
   return bStatus;
 }
 
-
 PrinterWindowsSpooler::~PrinterWindowsSpooler()
 {
 

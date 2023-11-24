@@ -45,6 +45,7 @@ jpeg *GlobalState::last_jpeg_receipt = nullptr;
 #if defined(WIN32) || defined(_WIN32) ||                                       \
     defined(__WIN32) && !defined(__CYGWIN__)
 PrinterWindowsSpooler GlobalState::winprint;
+PrinterWindowsSpooler GlobalState::windows_label_printer = PrinterWindowsSpooler(true);
 #endif
 
 #ifdef __linux__
