@@ -51,7 +51,7 @@ PrinterWindowsSpooler GlobalState::windows_label_printer = PrinterWindowsSpooler
 #ifdef __linux__
 PrinterLinuxUSBRAW GlobalState::linux_usb_print;
 PrinterThermalLinuxTCPIP GlobalState::linux_ip_print;
-LabelPrinterLinuxUSBRAW GlobalState::linux_label_printer;
+PrinterLinuxUSBRAW GlobalState::linux_label_printer = PrinterLinuxUSBRAW(true);
 #endif
 
 PrinterQt GlobalState::qt_printer;

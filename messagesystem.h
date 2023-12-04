@@ -70,7 +70,7 @@ private:
 #ifdef __linux__
   static PrinterLinuxUSBRAW linux_usb_print;
   static PrinterThermalLinuxTCPIP linux_ip_print;
-  static LabelPrinterLinuxUSBRAW linux_label_printer;
+  static PrinterLinuxUSBRAW linux_label_printer;
 #endif
   static PrinterQt qt_printer;
 

@@ -64,7 +64,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_printer">
        <attribute name="title">
@@ -168,7 +168,7 @@
                       <x>0</x>
                       <y>0</y>
                       <width>388</width>
-                      <height>430</height>
+                      <height>413</height>
                      </rect>
                     </property>
                    </widget>
@@ -299,7 +299,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>990</width>
-                <height>533</height>
+                <height>518</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -375,7 +375,7 @@
      <x>0</x>
      <y>0</y>
      <width>1056</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">

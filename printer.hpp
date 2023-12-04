@@ -181,7 +181,7 @@ private:
   std::string device() { return fields.at("device")->get_string(); };
 
 public:
-  PrinterLinuxUSBRAW();
+  PrinterLinuxUSBRAW(bool label=false);
   PrinterLinuxUSBRAW(const char *device_name);
   std::string getName() const { return name; };
   device_status updateAndGetStatus();
@@ -217,17 +217,6 @@ public:
   device_status updateAndGetStatus();
   bool send_raw(const std::string &buffer);
   ~PrinterThermalLinuxTCPIP(){};
-};
-
-class LabelPrinterLinuxUSBRAW : public PrinterRaw {
-public:
-  std::string device() { return fields.at("device")->get_string(); };
-  LabelPrinterLinuxUSBRAW();
-  device_status updateAndGetStatus();
-  bool send_raw(const std::string &buffer);
-  ~LabelPrinterLinuxUSBRAW(){};
-
-  bool printLabel(label_info info);
 };
 
 #endif

@@ -20,7 +20,7 @@ const std::string getJsonStatusString(const char *request) {
   ParseResult ok = d.Parse(request);
   if (!ok) {
     fprintf(stderr, "JSON parse error");
-    return "";
+    return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
   }
   GlobalState::updatePrinterStatus();
 
@@ -29,6 +29,7 @@ const std::string getJsonStatusString(const char *request) {
   if (itr != d.MemberEnd()) {
     std::string ID =
         std::to_string(itr->value.IsInt() ? itr->value.GetInt() : -1);
+        /*
     itr = d.FindMember("params");
     if (itr != d.MemberEnd()) {
       const Value &params = itr->value;
@@ -52,14 +53,16 @@ const std::string getJsonStatusString(const char *request) {
         }
       }
     }
+    
     GlobalState::demo_mode = demo_mode;
+    */
     return "{\"jsonrpc\": \"2.0\", \"id\": " + ID +
            ", \"result\": {\"printer\": {\"status\": \"" +
            to_string(GlobalState::getPrinterStatus()) +
            "\", \"messages\": \"\"}, \"scanner\": {\"status\": "
            "\"disconnected\", \"messages\": \"\"}}}";
   } else
-    return "";
+    return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
 }
 
 const std::string getResultTrueString(const char *request) {

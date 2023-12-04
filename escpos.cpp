@@ -216,12 +216,13 @@ escpos &escpos::image_from_bitmap_demo(const unsigned char * const * const s, in
 
 escpos &escpos::image_from_bitmap(const unsigned char * const * const s, int width, int height, int bytespp)
 {
+    /*
     if (GlobalState::demo_mode)
     {
         if (GlobalState::demo_print_jobs < 1) return image_from_bitmap_demo(s, width, height, bytespp);
         else GlobalState::demo_print_jobs--;
     }
-
+    */
 
     double ratio = double(width) / double(max_width);
     std::cout << "Ratio is: " << ratio << std::endl;
