@@ -20,7 +20,7 @@ namespace json
         ParseResult ok = d.Parse(request);
         if (!ok) {
             fprintf(stderr, "JSON parse error");
-            return "";
+            return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
         }
         GlobalState::updatePrinterStatus();
 
@@ -29,6 +29,7 @@ namespace json
         if (itr != d.MemberEnd())
         {
             std::string ID = std::to_string(itr->value.IsInt() ? itr->value.GetInt() : -1);
+        /*
             itr = d.FindMember("params");
             if (itr != d.MemberEnd())
             {
@@ -58,9 +59,10 @@ namespace json
                 }
             }
             GlobalState::demo_mode = demo_mode;
+            */
             return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": {\"printer\": {\"status\": \"" + to_string(GlobalState::getPrinterStatus()) + "\", \"messages\": \"\"}, \"scanner\": {\"status\": \"disconnected\", \"messages\": \"\"}}}";
         }
-        else return "";
+        else return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
     }
 
     const std::string getResultTrueString(const char* request)
@@ -129,6 +131,7 @@ namespace json
                                         {
                                             std::string receipt_string = std::string(receipt.GetString());
                                             //DEBUG
+                                            /*
 
                                             std::fstream file;
                                             try {
@@ -143,7 +146,7 @@ namespace json
                                                 if (file.is_open()) file.close();
                                             }
                                             if (file.is_open()) file.close();
-
+                                            */
                                             //DEBUG
                                             GlobalState::enqueuePrintJob(base64::Decode(receipt_string), JPEG);
 
