@@ -145,8 +145,11 @@ bool PrinterRaw::printLabel(label_info info) {
 
   int linewidth = info.printprice ? 12 : 22;
 
-  output << "A8," << 2 << ",0,1,3,1,N,\"TUTTIPACK\"\n";
+  output << "A26," << 2 << ",0,2,2,1,N,\"TUTTI-PACK\"\n";
 
+  if (info.barcode != "")
+    output << "B8,85,0,1,2,3,40,B,\"" + info.barcode + "\"\n";
+  
   if (tokens.size() > 0)
     output << "A2," << linenumber * 20 + lineoffset << ",0,2,1,1,N,\"";
   for (int i = 0; i < tokens.size(); i++) {
@@ -182,8 +185,6 @@ bool PrinterRaw::printLabel(label_info info) {
            << "\"\n";
   }
 
-  if (info.barcode != "")
-    output << "B8,105,0,1,2,3,40,N,\"" + info.barcode + "\"\n";
   output << "P1\n";
 
   // std::cout << "Output Buffer: \n" << output.str();
