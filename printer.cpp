@@ -1,7 +1,7 @@
 #include "printer.hpp"
 #include "globals.hpp"
-#include "inputfield.hpp"
 #include "helpers.hpp"
+#include "inputfield.hpp"
 #include "messagesystem.h"
 #include <filesystem>
 #include <fstream>
@@ -103,6 +103,9 @@ bool PrinterRaw::send_raw(const std::string &) {
 } // Send length bytes of data to the printer
 
 bool PrinterRaw::printJPEG(const std::string &s) {
+  if (fields.contains("max_width")) {
+    escpos_generator.max_width = fields["max_width"]->get_int();
+  };
   escpos_generator.begin().image_from_jpeg(s).feednlines(lines_to_feed_end());
   if (paper_cut())
     escpos_generator.fullcut();
@@ -111,6 +114,9 @@ bool PrinterRaw::printJPEG(const std::string &s) {
 }
 
 bool PrinterRaw::printJPEG(const jpeg &jpeg_object) {
+  if (fields.contains("max_width")) {
+    escpos_generator.max_width = fields["max_width"]->get_int();
+  };
   escpos_generator.begin()
       .image_from_jpeg(jpeg_object)
       .feednlines(lines_to_feed_end());
@@ -149,7 +155,7 @@ bool PrinterRaw::printLabel(label_info info) {
 
   if (info.barcode != "")
     output << "B8,85,0,1,2,3,40,B,\"" + info.barcode + "\"\n";
-  
+
   if (tokens.size() > 0)
     output << "A2," << linenumber * 20 + lineoffset << ",0,2,1,1,N,\"";
   for (int i = 0; i < tokens.size(); i++) {
@@ -261,7 +267,6 @@ bool PrinterLinuxUSBRAW::send_raw(const std::string &buffer) {
     file.close();
   return true;
 }
-
 
 PrinterThermalLinuxTCPIP::PrinterThermalLinuxTCPIP() {
   name = "Linux TCP/IP Printer";
