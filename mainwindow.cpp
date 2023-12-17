@@ -1,9 +1,3 @@
-#include "mainwindow.h"
-#include "hardware.hpp"
-#include "messagesystem.h"
-#include "printercombofieldmodel.h"
-#include "printerdriverlistmodel.h"
-#include "ui_mainwindow.h"
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QFile>
@@ -20,6 +14,13 @@
 #include <qscrollarea.h>
 #include <qsizepolicy.h>
 #include <sstream>
+
+#include "mainwindow.h"
+#include "hardware.hpp"
+#include "messagesystem.h"
+#include "printercombofieldmodel.h"
+#include "printerdriverlistmodel.h"
+#include "ui_mainwindow.h"
 
 MainWindow *MainWindow::active_window;
 

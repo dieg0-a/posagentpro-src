@@ -1,16 +1,10 @@
-#include "qtprinter.hpp"
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <qnamespace.h>
 #include <string>
-
 #include <math.h>
-
-#include "inputfield.hpp"
-#include "messagesystem.h"
 
 #include <QPageSetupDialog>
 #include <QPainter>
@@ -18,6 +12,12 @@
 #include <QPrintPreviewDialog>
 #include <QPrinter>
 #include <QPrinterInfo>
+
+#include "inputfield.hpp"
+#include "messagesystem.h"
+
+#include "qtprinter.hpp"
+
 
 extern int bayer_matrix[];
 
