@@ -25,10 +25,9 @@ set(PROJECT_SOURCES
         mainwindow.cpp mainwindow.ui about.ui mainwindow.cpp mainwindow.h
         messagesystem.h messagesystem.cpp printercombofieldmodel.h
         printercombofieldmodel.cpp printerdriverlistmodel.h
-        printerdriverlistmodel.cpp resources.cpp resources.h
-        inputfield.hpp inputfield.cpp windowsprinter.h windows_printer_extra.cpp
-        eventclient.cpp eventclient.h eventdata.cpp eventdata.h eventsystem.cpp
-        qtprinter.hpp qtprinter.cpp
+        printerdriverlistmodel.cpp inputfield.hpp inputfield.cpp windowsprinter.h
+        windows_printer_extra.cpp eventclient.cpp eventclient.h eventdata.cpp
+        eventdata.h eventsystem.cpp qtprinter.hpp qtprinter.cpp
         eventsystem.h printagent.qrc
 )
 

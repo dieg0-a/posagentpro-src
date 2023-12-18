@@ -19,19 +19,14 @@ private:
 
 public:
   void subscribeToEvent(std::string eventname);
-
   void desuscribeToEvent(std::string &eventname);
-
   void desuscribeToAllEvents();
-
   void handleEvent(std::string &name, EventData &data);
-
   int getID() {return id;};
 
   static EventClient root;
 
   EventClient(Object *_parent);
-
   ~EventClient();
 };
 

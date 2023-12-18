@@ -81,7 +81,7 @@ namespace json
         if (itr != d.MemberEnd())
         {
             std::string ID = std::to_string(itr->value.IsInt() ? itr->value.GetInt() : -1);
-            std::cout << "ID: " << ID << std::endl;
+ //           std::cout << "ID: " << ID << std::endl;
 
             return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": true}";
         }
@@ -157,7 +157,7 @@ namespace json
                                 }
                                 else if (itr->value == "cashbox")
                                 {
-                                    std::cout << "Got CashBox Open Request\n";
+//                                    std::cout << "Got CashBox Open Request\n";
 //                                    std::string temp = "dummy";
                                     GlobalState::enqueuePrintJob("dummy", CASHDRAWER);
                                     return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": true}";

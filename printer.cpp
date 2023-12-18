@@ -55,43 +55,6 @@ std::multimap<int, input_field *> const &Printer::getFieldsByOrder() const {
   return field_map;
 }
 
-/*
-int Printer::getInt(std::string name) const
-{
-    auto s = fields.find(name);
-    if (s != fields.end()) return s->second->get_int();
-    else
-    {
-        std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
-        return -1;
-    }
-}
-
-std::string Printer::getString(std::string name) const
-{
-    auto s = fields.find(name);
-    if (s != fields.end()) return s->second->get_string();
-    else
-    {
-        std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
-        return "";
-    }
-}
-
-std::vector<std::string> empty_str_vector;
-
-std::vector<std::string> &Printer::getListOfStrings(std::string name)
-{
-    auto s = fields.find(name);
-    if (s != fields.end()) return s->second->get_list_of_str();
-    else
-    {
-        std::cout << "DEBUG: WARNING REQUESTING A NON EXISTENT FIELD\n";
-        return empty_str_vector;
-    }
-}
-*/
-
 bool Printer::openCashDrawer() { return cash_drawer_supported; }
 
 bool PrinterRaw::send_raw(const std::string &) {
@@ -99,9 +62,15 @@ bool PrinterRaw::send_raw(const std::string &) {
 } // Send length bytes of data to the printer
 
 bool PrinterRaw::printJPEG(const std::string &s) {
+  int max_width = 576;
+  int gamma = 240;
   if (fields.contains("max_width"))
-    escpos_generator.max_width = fields["max_width"]->get_int();
-  escpos_generator.begin().image_from_jpeg(s).feednlines(lines_to_feed_end());
+    max_width = fields["max_width"]->get_int();
+  if (fields.contains("gamma"))
+    gamma = fields["gamma"]->get_int();
+  escpos_generator.begin()
+      .image_from_jpeg(s, max_width, gamma)
+      .feednlines(lines_to_feed_end());
   if (paper_cut())
     escpos_generator.fullcut();
   std::string output = escpos_generator.end();
@@ -109,10 +78,14 @@ bool PrinterRaw::printJPEG(const std::string &s) {
 }
 
 bool PrinterRaw::printJPEG(const jpeg &jpeg_object) {
+  int max_width = 576;
+  int gamma = 240;
   if (fields.contains("max_width"))
-    escpos_generator.max_width = fields["max_width"]->get_int();
+    max_width = fields["max_width"]->get_int();
+  if (fields.contains("gamma"))
+    gamma = fields["gamma"]->get_int();
   escpos_generator.begin()
-      .image_from_jpeg(jpeg_object)
+      .image_from_jpeg(jpeg_object, max_width, gamma)
       .feednlines(lines_to_feed_end());
   if (paper_cut())
     escpos_generator.fullcut();

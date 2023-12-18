@@ -1,6 +1,5 @@
 #include <string>
 #include <iostream>
-#include "hardware.hpp"
 #include "rapidjson/document.h"
 
 using namespace rapidjson;

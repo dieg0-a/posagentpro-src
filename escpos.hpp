@@ -15,20 +15,12 @@ public:
     escpos();
     escpos &begin();
 //    escpos &image_from_base64_encoded_jpeg(std::string &s);
-    escpos &image_from_jpeg(const std::string &s);
-    escpos &image_from_jpeg(const jpeg &jpeg_object);
-
-    escpos &image_from_bitmap(const unsigned char * const * const s, int width, int height, int bytespp);
-    escpos &image_from_bitmap_demo(const unsigned char * const * const s, int width, int height, int bytespp);
+    escpos &image_from_jpeg(const std::string &s, int max_width = 576, int gamma = 240);
+    escpos &image_from_jpeg(const jpeg &jpeg_object, int max_width = 576, int gamma = 240);
     escpos &feednlines(int n);
     escpos &fullcut();
     escpos &cashdrawer();
-
-
     const std::string end();
-    short max_width = 576;
-    int gamma = 240;
-    std::string protocol_type = "escpos";
 };
 
 
