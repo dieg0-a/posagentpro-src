@@ -858,7 +858,7 @@ MainWindow::MainWindow(QWidget *parent)
   };
 
   ui->statusbar->addPermanentWidget(printer_status_widget);
-
+/*
   demo_mode_widget = new QWidget(this);
   demo_mode_widget->setLayout(new QHBoxLayout());
   demo_mode_on_off = new QLabel(demo_mode_widget);
@@ -871,7 +871,7 @@ MainWindow::MainWindow(QWidget *parent)
   setDemoMode();
 
   ui->statusbar->addPermanentWidget(demo_mode_widget);
-
+*/
   ui->printer_driver_combo->setModel(new PrinterDriverListModel(this));
   ui->printer_driver_combo->setCurrentIndex(
       GlobalState::getCurrentPrinterIndex());
