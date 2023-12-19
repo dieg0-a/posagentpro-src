@@ -178,6 +178,7 @@ PrinterThermalLinuxTCPIP::PrinterThermalLinuxTCPIP() {
                                    "spinbox"),
            5);
   addField(new boolean_field("paper_cut", "Cut Paper", false), 6);
+    addField(new boolean_field("cash_drawer", "Enable Cash Drawer", false), 7);
 
   GlobalState::registerPrinter(name, this);
 }
@@ -202,6 +203,7 @@ PrinterThermalLinuxTCPIP::PrinterThermalLinuxTCPIP(const std::string &_address,
                                    "spinbox"),
            5);
   addField(new boolean_field("paper_cut", "Cut Paper", false), 6);
+    addField(new boolean_field("cash_drawer", "Enable Cash Drawer", false), 7);
 }
 
 bool PrinterThermalLinuxTCPIP::connectToPrinter() {

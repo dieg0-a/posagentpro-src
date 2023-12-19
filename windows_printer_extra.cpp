@@ -25,5 +25,6 @@ PrinterWindowsSpooler::PrinterWindowsSpooler()
         "spinbox"),
         4);
     addField(new boolean_field("paper_cut", "Cut Paper", false), 5);
+    addField(new boolean_field("cash_drawer", "Enable Cash Drawer", false), 6);
 }
 #endif
