@@ -1,6 +1,5 @@
 #ifndef ESCPOS_HPP
 #define ESCPOS_HPP
-#include <cstddef>
 #include <sstream>
 #include "jpeg.hpp"
 

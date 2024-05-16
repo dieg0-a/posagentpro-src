@@ -5,8 +5,6 @@
 #include "component.hpp"
 
 
-#include <functional>
-#include <map>
 #include <string>
 
 

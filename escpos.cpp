@@ -1,11 +1,6 @@
 #include "escpos.hpp"
-#include "base64.hpp"
 #include "jpeg.hpp"
-#include "messagesystem.h"
 #include <cmath>
-#include <fstream>
-#include <iostream>
-#include <random>
 #include <string>
 
 

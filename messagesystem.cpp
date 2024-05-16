@@ -14,9 +14,6 @@ std::atomic<uWS::Loop *> GlobalState::network_loop;
 bool GlobalState::autosave = false;
 int GlobalState::current_printer_index;
 int GlobalState::http_proxy_port = 9069;
-std::atomic<bool> GlobalState::demo_mode = false;
-
-int GlobalState::demo_print_jobs = 1;
 
 std::function<bool(const std::string &key, std::string &val)>
     GlobalState::str_from_settings;
@@ -33,8 +30,6 @@ std::function<bool(const std::string &key, bool val)>
     GlobalState::bool_to_settings;
 
 jpeg *GlobalState::last_jpeg_receipt = nullptr;
-
-#include "escpos.hpp"
 
 #if defined(WIN32) || defined(_WIN32) ||                                       \
     defined(__WIN32) && !defined(__CYGWIN__)

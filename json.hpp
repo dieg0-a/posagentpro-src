@@ -1,8 +1,7 @@
 #include <string>
-#include <iostream>
-#include "rapidjson/document.h"
 
-using namespace rapidjson;
+
+//using namespace rapidjson;
 
 namespace json
 {

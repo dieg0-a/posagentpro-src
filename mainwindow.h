@@ -17,7 +17,6 @@
 #include <sstream>
 
 #include "eventclient.h"
-#include "ui_about.h"
 
 namespace Ui {
 class MainWindow;
@@ -58,7 +57,6 @@ public slots:
   void setHttpProxyPort(int port);
   void setStartInTray(int state);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
-  void setDemoMode();
   void closeApplication();
   void updateReceiptPreview();
   void toggleDisplayPreview(bool checked);
@@ -85,11 +83,9 @@ private:
   QSystemTrayIcon *trayIcon;
 
   QWidget *printer_status_widget;
-  QWidget *demo_mode_widget;
 
   QLabel *printer_status_label;
   QLabel *printer_status_icon_label;
-  QLabel *demo_mode_on_off;
 
   QIcon *printer_status_on_icon;
   QIcon *printer_status_off_icon;
@@ -110,7 +106,6 @@ private:
   void gammaUpdated(EventData data);
 
   bool closing = false;
-  bool demo_mode_last;
   bool showpreview = false;
 
   void updateGUIControls();

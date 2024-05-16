@@ -1,11 +1,7 @@
 #include <string>
-#include <iostream>
 #include "rapidjson/document.h"
 #include "base64.hpp"
 #include "messagesystem.h"
-
-#include <fstream>
-
 
 using namespace rapidjson;
 
@@ -13,7 +9,6 @@ namespace json
 {
     const std::string getJsonStatusString(const char* request)
     {
-        bool demo_mode = true;
         // 1. Parse a JSON string into DOM.
 //        std:: cout << "Got string: " << request << std::endl;
         Document d;
@@ -29,37 +24,6 @@ namespace json
         if (itr != d.MemberEnd())
         {
             std::string ID = std::to_string(itr->value.IsInt() ? itr->value.GetInt() : -1);
-        /*
-            itr = d.FindMember("params");
-            if (itr != d.MemberEnd())
-            {
-                const Value &params = itr->value;
-                if (params.IsObject())
-                {
-                    itr = params.FindMember("data");
-                    if (itr != params.MemberEnd())
-                    {
-                        const Value &data = itr->value;
-                        if (data.IsObject())
-                        {
-                            itr = data.FindMember("posagent");
-                            if (itr != data.MemberEnd())
-                            {
-                                if (itr->value.IsBool())
-                                {
-                                    if (itr->value == true)
-                                    {
-//                                        std::cout << "Detected module installed!\n";
-                                        demo_mode = false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            GlobalState::demo_mode = demo_mode;
-            */
             return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": {\"printer\": {\"status\": \"" + to_string(GlobalState::getPrinterStatus()) + "\", \"messages\": \"\"}, \"scanner\": {\"status\": \"disconnected\", \"messages\": \"\"}}}";
         }
         else return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";

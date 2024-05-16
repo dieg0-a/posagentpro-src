@@ -7,10 +7,6 @@
 
 #include <list>
 #include <map>
-#include <stdio.h>
-#include <string.h>
-#include <vector>
-
 #include "escpos.hpp"
 #include "inputfield.hpp"
 #include "jpeg.hpp"

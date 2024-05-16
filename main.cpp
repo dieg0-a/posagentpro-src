@@ -3,9 +3,7 @@
 #include "json.hpp"
 #include "messagesystem.h"
 #include <QApplication>
-#include <chrono>
 #include <mainwindow.h>
-#include <thread>
 
 int networkThread(int http_port) {
   //  PrinterDummy *p = new PrinterDummy();

@@ -6,13 +6,9 @@
 #include "qtprinter.hpp"
 #include "printer.hpp"
 
-#include "windowsprinter.h"
-
-
-
 #include <mutex>
 
-#include "App.h"
+#include "Loop.h"
 #include "jpeg.hpp"
 
 int networkThread(int);
@@ -70,8 +66,6 @@ private:
 
 public:
   static bool autosave;
-  static std::atomic<bool> demo_mode;
-  static int demo_print_jobs;
   static int getCurrentPrinterIndex() { return current_printer_index; };
 
   static jpeg *getLastReceipt() { return last_jpeg_receipt; };

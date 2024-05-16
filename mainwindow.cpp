@@ -7,8 +7,6 @@
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QTimer>
-#include <fstream>
-#include <iostream>
 #include <math.h>
 #include <qlayoutitem.h>
 #include <qscrollarea.h>
@@ -20,6 +18,7 @@
 #include "printercombofieldmodel.h"
 #include "printerdriverlistmodel.h"
 #include "ui_mainwindow.h"
+#include "ui_about.h"
 
 MainWindow *MainWindow::active_window;
 
@@ -637,9 +636,6 @@ void MainWindow::refreshTimer() {
         printer_status_off_icon->pixmap(16, 16));
     printer_status_label->setText("Printer OFF");
   };
-
-  if (GlobalState::demo_mode != demo_mode_last)
-    setDemoMode();
 }
 
 void MainWindow::startNetworkThread() { GlobalState::startNetworkThread(); }
@@ -753,14 +749,6 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
   }
 }
 
-void MainWindow::setDemoMode() {
-  demo_mode_last = GlobalState::demo_mode;
-  if (demo_mode_last)
-    demo_mode_on_off->setText("Demo mode: ON ");
-  else
-    demo_mode_on_off->setText("Demo mode: OFF");
-}
-
 void MainWindow::closeApplication() {
   closing = true;
   showNormal(); //// Workaround for Windows
@@ -858,20 +846,6 @@ MainWindow::MainWindow(QWidget *parent)
   };
 
   ui->statusbar->addPermanentWidget(printer_status_widget);
-/*
-  demo_mode_widget = new QWidget(this);
-  demo_mode_widget->setLayout(new QHBoxLayout());
-  demo_mode_on_off = new QLabel(demo_mode_widget);
-  demo_mode_widget->layout()->addWidget(demo_mode_on_off);
-
-  demo_mode_on_off->setToolTip(
-      "In demo mode a single receipt will be printed normally, then diagonal "
-      "stripes with the word DEMO will "
-      "be printed on it");
-  setDemoMode();
-
-  ui->statusbar->addPermanentWidget(demo_mode_widget);
-*/
   ui->printer_driver_combo->setModel(new PrinterDriverListModel(this));
   ui->printer_driver_combo->setCurrentIndex(
       GlobalState::getCurrentPrinterIndex());
