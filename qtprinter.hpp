@@ -7,8 +7,6 @@
 #include <QPrintPreviewDialog>
 #include <QPageSetupDialog>
 
-#include "inputfield.hpp"
-
 class PrinterQt : public PrinterRaw, Object {
 private:
   QPrinter *printer;
