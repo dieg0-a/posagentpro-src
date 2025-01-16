@@ -229,7 +229,12 @@ public:
   int get_index() const { return current_item_index; };
 
   std::vector<std::string> &get_list_of_str() { return options; };
-  std::string get_string() const { return options.at(current_item_index); };
+  std::string get_string() const {
+    if (options.size() > 0 && current_item_index < options.size())
+      return options.at(current_item_index);
+    else
+      return "Undefined"; 
+    };
   std::string get_string_at(int index) {
     if (index < options.size())
       return options.at(index);

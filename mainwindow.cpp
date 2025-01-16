@@ -89,6 +89,11 @@ void MainWindow::optionSliderReleased(int value) {
   GlobalState::printerSetInt(j->objectName().toStdString(), j->value());
 }
 
+void MainWindow::optionSpinboxChanged(int value) {
+  auto j = qobject_cast<QSpinBox *>(sender());
+  GlobalState::printerSetInt(j->objectName().toStdString(), j->value());
+}
+
 void MainWindow::optionCheckBoxToggled(int value) {
   auto j = qobject_cast<QCheckBox *>(sender());
   GlobalState::printerSetInt(j->objectName().toStdString(), value);
@@ -326,6 +331,8 @@ void MainWindow::updatePrintConfigWidget() {
         input->setValue(options.second->get_int());
         input->setObjectName(options.second->name().c_str());
         number_field->layout()->addWidget(input);
+        connect(input, SIGNAL(valueChanged(int)), this,
+                SLOT(optionSpinboxChanged(int)));
       } else if (r->get_widget_type() == "slider") {
         auto number_field = new QWidget(p_settings_top_widget);
         p_settings_top_widget->layout()->addWidget(number_field);

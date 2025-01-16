@@ -44,6 +44,7 @@ public slots:
   void setStringOption();
   void setIntOption();
   void optionSliderReleased(int value);
+  void optionSpinboxChanged(int value);
   void optionCheckBoxToggled(int value);
   void optionTextChanged(const QString &text);
   void optionComboChanged(const QString &text);
