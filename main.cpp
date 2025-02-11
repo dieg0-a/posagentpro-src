@@ -235,7 +235,9 @@ int networkThread(int http_port) {
 #include <windows.h>
 
 std::wstring GetProcessNameByID(DWORD processID) {
-  WCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+//  WCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+  WCHAR szProcessName[MAX_PATH] = L"<unknown>";
+
 
   // Get a handle to the process.
 
@@ -283,7 +285,7 @@ bool matchProcessName() {
       if (aProcesses[i] != processID) {
         auto nameW = GetProcessNameByID(aProcesses[i]);
         auto szProcessName = nameW.c_str();
-        if (!_tcscmp(szProcessName, processNameW))
+        if (!wcscmp(szProcessName, processNameW))
           return true;
       }
     }

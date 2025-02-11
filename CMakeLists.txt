@@ -3,7 +3,38 @@ cmake_minimum_required(VERSION 3.5)
 project(posagent VERSION 0.1 LANGUAGES CXX C)
 
 if (WIN32)
-set (CMAKE_PREFIX_PATH "C:\\Qt\\6.5.2\\msvc2019_64")
+set (CMAKE_PREFIX_PATH "C:\\Qt\\5.12.12\\msvc2017")
+include(FetchContent)
+FetchContent_Declare(
+  zlib
+  GIT_REPOSITORY https://github.com/madler/zlib.git
+  GIT_TAG        51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf # release-1.3.1
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_Declare(
+  libjpeg
+  GIT_REPOSITORY https://github.com/winlibs/libjpeg.git
+  GIT_TAG        libjpeg-turbo-2.1.0 # release-2.1.0
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_Declare(
+  uwebsockets
+  GIT_REPOSITORY https://github.com/uNetworking/uWebSockets.git
+  GIT_TAG        v20.62.0 # release-20.62.0
+  OVERRIDE_FIND_PACKAGE
+)
+
+FetchContent_MakeAvailable(zlib libjpeg uwebsockets)
+
+find_package(zlib)
+find_package(libjpeg)
+find_package(uwebsockets)
+
+set(ZLIB_INCLUDE_DIR ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+set(ZLIB_LIBRARY zlib)
+
 endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -36,8 +67,8 @@ set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/posagent_resource.rc"
 
 if (WIN32)
    SET(OBJS
-     ${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo64/lib/jpeg-static.lib ${CMAKE_CURRENT_SOURCE_DIR}/winlibs/uSockets.lib
-     ${CMAKE_CURRENT_SOURCE_DIR}/winlibs/uv_a.lib ${CMAKE_CURRENT_SOURCE_DIR}/winlibs/zlibstatic.lib
+#     ${CMAKE_CURRENT_SOURCE_DIR}/winlibs/uSockets.lib
+#     ${CMAKE_CURRENT_SOURCE_DIR}/winlibs/uv_a.lib
    )
 else()
     SET(OBJS
@@ -96,26 +127,26 @@ endif()
 #    target_link_libraries( posagent ${OPENSSL_LIBRARIES} )
 #endif( OPENSSL_FOUND )
 if (WIN32)
-target_include_directories(posagent PRIVATE uWebSockets/src uWebSockets/uSockets/src uWebSockets libjpeg-turbo64/include jpeg/include zlib)
+target_include_directories(posagent PRIVATE ${uwebsockets_SOURCE_DIR}/src ${uwebsockets_SOURCE_DIR}/uSockets/src ${zlib_SOURCE_DIR} ${libjpeg_SOURCE_DIR} ${libjpeg_BINARY_DIR})
 else()
-    target_include_directories(posagent PRIVATE uWebSockets/src uWebSockets/uSockets/src uWebSockets zlib)
+    target_include_directories(posagent PRIVATE uWebSockets/src uWebSockets/uSockets/src uWebSockets)
 endif()
 
 add_link_options(posagent)
 if (WIN32)
-   link_directories(uWebSockets/uSockets jpeg/lib winlibs)
+   link_directories(${zlib_BINARY_DIR} ${usockets_BINARY_DIR} ${libjpeg_BINARY_DIR} uWebSockets/uSockets/x86win)
 else()
    link_directories(uWebSockets/uSockets)
 endif()
 
 if (WIN32)
-    target_link_libraries(posagent PRIVATE iphlpapi userenv.lib Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport)
+    target_link_libraries(posagent PRIVATE iphlpapi userenv.lib Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport zlib jpeg ${CMAKE_CURRENT_SOURCE_DIR}/uWebSockets/uSockets/x86win/usockets.lib ${CMAKE_CURRENT_SOURCE_DIR}/uWebSockets/uSockets/x86win/uv_a.lib)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000")
 else()
     find_package(ZLIB REQUIRED)
     find_package(OpenSSL REQUIRED)
     find_package(JPEG 80 REQUIRED)
-    target_link_libraries(posagent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport ZLIB::ZLIB OpenSSL::SSL JPEG::JPEG ${CMAKE_SOURCE_DIR}/uWebSockets/uSockets/uSockets.a)
+    target_link_libraries(posagent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::PrintSupport zlib::zlib OpenSSL::SSL JPEG::JPEG ${CMAKE_SOURCE_DIR}/uWebSockets/uSockets/uSockets.a)
 endif()
 
 set_target_properties(posagent PROPERTIES

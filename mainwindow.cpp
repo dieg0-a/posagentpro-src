@@ -638,8 +638,8 @@ void MainWindow::refreshTimer() {
     printer_status_label->setText("Printer OFF");
   };
 
-  if (GlobalState::demo_mode != demo_mode_last)
-    setDemoMode();
+//  if (GlobalState::demo_mode != demo_mode_last)
+//    setDemoMode();
 }
 
 void MainWindow::startNetworkThread() { GlobalState::startNetworkThread(); }
