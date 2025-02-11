@@ -5,3 +5,4 @@ uWebSockets/
 .vscode/
 .vs/
 vc140.pdb
+deps/
