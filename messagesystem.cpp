@@ -113,10 +113,26 @@ bool GlobalState::processQueue() {
           last_jpeg_receipt = nullptr;
         }
       }
+      else if (raw_job_queue.front().second == JSON) {
+        queue_empty = false;
+        // if (last_jpeg_receipt != nullptr) {
+        //   delete last_jpeg_receipt;
+        //   last_jpeg_receipt = nullptr;
+        // }
+        // last_jpeg_receipt = new jpeg();
+        selected_printer->printJSON(raw_job_queue.front().first);
+        // if (last_jpeg_receipt->decode(raw_job_queue.front().first))
+        //   selected_printer->printJPEG(*last_jpeg_receipt);
+        // else {
+        //   delete last_jpeg_receipt;
+        //   last_jpeg_receipt = nullptr;
+        // }
+      }
 
       else if (raw_job_queue.front().second == CASHDRAWER) {
         selected_printer->openCashDrawer();
       }
+
       raw_job_queue.pop();
     }
   }

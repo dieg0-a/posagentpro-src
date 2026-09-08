@@ -28,7 +28,7 @@ set(PROJECT_SOURCES
         printerdriverlistmodel.cpp inputfield.hpp inputfield.cpp windowsprinter.h
         windows_printer_extra.cpp eventclient.cpp eventclient.h eventdata.cpp
         eventdata.h eventsystem.cpp qtprinter.hpp qtprinter.cpp
-        eventsystem.h printagent.qrc
+        eventsystem.h escposreceiptrenderer.hpp printagent.qrc
 )
 
 

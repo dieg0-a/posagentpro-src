@@ -19,7 +19,7 @@ enum json_rpc_type {
   PROXY_STATUS,
   PRINTER_DEFAULT_ACTION
 };
-enum print_job_type { JPEG, CASHDRAWER };
+enum print_job_type { JPEG, JSON, CASHDRAWER };
 
 class GlobalState {
 private:

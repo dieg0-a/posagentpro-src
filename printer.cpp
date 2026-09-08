@@ -6,6 +6,11 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include "escposreceiptrenderer.hpp"
+
+#include "json/single_include/nlohmann/json.hpp"
+
+using json = nlohmann::json;
 
 std::string to_string(const device_status &d) {
   return d == CONNECTED ? "connected" : "disconnected";
@@ -15,6 +20,7 @@ device_status Printer::updateAndGetStatus() { return DISCONNECTED; }
 
 bool Printer::printJPEG(const std::string &s) { return true; };
 bool Printer::printJPEG(const jpeg &jpeg_object) { return true; };
+bool Printer::printJSON(const std::string &s) { return true; };
 
 device_status PrinterDummy::updateAndGetStatus() { return CONNECTED; };
 
@@ -61,6 +67,10 @@ bool PrinterRaw::send_raw(const std::string &) {
   return true;
 } // Send length bytes of data to the printer
 
+bool PrinterRaw::send_raw(const std::vector<unsigned char> buffer) {
+  return true;
+} // Send length bytes of data to the printer
+
 bool PrinterRaw::printJPEG(const std::string &s) {
   int max_width = 576;
   int gamma = 240;
@@ -90,6 +100,40 @@ bool PrinterRaw::printJPEG(const jpeg &jpeg_object) {
   if (paper_cut())
     escpos_generator.fullcut();
   std::string output = escpos_generator.end();
+  return send_raw(output);
+}
+
+bool PrinterRaw::printJSON(const std::string &s) {
+  int max_width = 576;
+  int gamma = 240;
+  if (fields.contains("max_width"))
+    max_width = fields["max_width"]->get_int();
+  if (fields.contains("gamma"))
+    gamma = fields["gamma"]->get_int();
+  
+  auto escpos_renderer = EscPosReceiptRenderer({
+        int(48.0 * (double(max_width)/576.0)),  //Chars per line
+        max_width,  // Pixel width
+        true, //Print logo
+        true, // Cut paper after the receipt.
+        lines_to_feed_end(), // Feed before cutting.
+        true, // Enable bold for important values.
+        fields.contains("codepage") ?
+            fields["codepage"]->get_string() : "IBM437" //Printer CodePage
+  });
+
+  json receipt_json_object =
+    json::parse(s);
+
+  
+    // escpos_generator.begin()
+  //     .image_from_jpeg(s, max_width, gamma)
+  //     .feednlines(lines_to_feed_end());
+  // if (paper_cut())
+  //   escpos_generator.fullcut();
+  // std::string output = escpos_generator.end();
+
+  auto output = escpos_renderer.render(receipt_json_object);
   return send_raw(output);
 }
 
@@ -133,11 +177,37 @@ PrinterLinuxUSBRAW::PrinterLinuxUSBRAW() : PrinterRaw() {
   addField(new boolean_field("paper_cut", "Cut Paper", false), 5);
   addField(new boolean_field("cash_drawer", "Enable Cash Drawer", false), 6);
 
+  std::vector<std::string> codepage;
+  codepage.emplace(codepage.end(), std::string("IBM437"));
+
+  addField(new string_combo_list_field("codepage", "Printer Codepage", std::move(codepage), 0), 7);
+
   GlobalState::registerPrinter(name, this);
 }
 
 device_status PrinterLinuxUSBRAW::updateAndGetStatus() {
   return std::filesystem::exists(device()) ? CONNECTED : DISCONNECTED;
+}
+
+bool PrinterLinuxUSBRAW::send_raw(const std::vector<unsigned char> buffer) {
+    std::fstream file;
+  try {
+    file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
+    file.open(fields.at("device")->get_string(), std::ios::out | std::ios::binary);
+    file.write(
+        reinterpret_cast<const char*>(buffer.data()),
+        static_cast<std::streamsize>(buffer.size())
+    );
+  } catch (const std::ofstream::failure &e) {
+    std::cout << "Failure to open or write to Linux USB Raw Printer! Check "
+                 "permissions and address...\n";
+    if (file.is_open())
+      file.close();
+    return false;
+  }
+  if (file.is_open())
+    file.close();
+  return true;
 }
 
 bool PrinterLinuxUSBRAW::send_raw(const std::string &buffer) {

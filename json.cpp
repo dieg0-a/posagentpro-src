@@ -1,137 +1,121 @@
-#include <string>
-#include "rapidjson/document.h"
 #include "base64.hpp"
 #include "messagesystem.h"
+#include <string>
 
-using namespace rapidjson;
+#include "json/single_include/nlohmann/json.hpp"
 
-namespace json
-{
-    const std::string getJsonStatusString(const char* request)
-    {
-        // 1. Parse a JSON string into DOM.
-//        std:: cout << "Got string: " << request << std::endl;
-        Document d;
-        ParseResult ok = d.Parse(request);
-        if (!ok) {
-            fprintf(stderr, "JSON parse error");
-            return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
-        }
-        GlobalState::updatePrinterStatus();
+using nlohmann_json = nlohmann::json;
 
-        // 3. Stringify the DOM
-        Value::ConstMemberIterator itr = d.FindMember("id");
-        if (itr != d.MemberEnd())
-        {
-            std::string ID = std::to_string(itr->value.IsInt() ? itr->value.GetInt() : -1);
-            return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": {\"printer\": {\"status\": \"" + to_string(GlobalState::getPrinterStatus()) + "\", \"messages\": \"\"}, \"scanner\": {\"status\": \"disconnected\", \"messages\": \"\"}}}";
-        }
-        else return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+namespace json {
+const std::string getJsonStatusString(const char *request) {
+  // 1. Parse a JSON string into DOM.
+  //        std:: cout << "Got string: " << request << std::endl;
+
+  try {
+    nlohmann_json req = nlohmann_json::parse(request);
+    nlohmann_json id = req.at("id");
+    if (id.is_number()) {
+        auto id_str = std::to_string(id.get<int>());
+//      nlohmann_json params = req.at("params");
+
+      return "{\"jsonrpc\": \"2.0\", \"id\": " +
+             id_str +
+             ", \"result\": {\"printer\": {\"status\": \"" +
+             to_string(GlobalState::getPrinterStatus()) +
+             "\", \"messages\": \"\"}, \"scanner\": {\"status\": "
+             "\"disconnected\", \"messages\": \"\"}}}";
     }
+    return "{\"jsonrpc\": \"2.0\", \"id\":0, \"result\": false}";
+  }
 
-    const std::string getResultTrueString(const char* request)
-    {
-        // 1. Parse a JSON string into DOM.
-//        std:: cout << "Got string: " << request << std::endl;
-        Document d;
-        ParseResult ok = d.Parse(request);
-        if (!ok) {
-            fprintf(stderr, "JSON parse error");
-            return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
-        }
-
-        // 3. Stringify the DOM
-        Value::ConstMemberIterator itr = d.FindMember("id");
-        if (itr != d.MemberEnd())
-        {
-            std::string ID = std::to_string(itr->value.IsInt() ? itr->value.GetInt() : -1);
- //           std::cout << "ID: " << ID << std::endl;
-
-            return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": true}";
-        }
-        else return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
-    }
-
-    const std::string PrinterDefaultAction(const char* request)
-    {
-        std::string ID;
-        Document d;
-        ParseResult ok = d.Parse(request);
-        if (!ok) {
-            fprintf(stderr, "JSON parse error");
-            return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
-        }
-        Value::ConstMemberIterator itr = d.FindMember("id");
-        if (itr != d.MemberEnd())
-        {
-            ID = std::to_string(itr->value.IsInt() ? itr->value.GetInt() : -1);
-        }
-        else return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
-
-        itr = d.FindMember("params");
-        if (itr != d.MemberEnd())
-        {
-            const Value &params = itr->value;
-            if (params.IsObject())
-            {
-                itr = params.FindMember("data");
-                if (itr != params.MemberEnd())
-                {
-                    const Value &data = itr->value;
-                    if (data.IsObject())
-                    {
-                        itr = data.FindMember("action");
-                        if (itr != data.MemberEnd())
-                        {
-                            if (itr->value.IsString())
-                            {
-                                if (itr->value == "print_receipt")
-                                {
-                                    itr = data.FindMember("receipt");
-                                    if (itr != data.MemberEnd())
-                                    {
-                                        const Value &receipt = itr->value;
-                                        if (receipt.IsString())
-                                        {
-                                            std::string receipt_string = std::string(receipt.GetString());
-                                            //DEBUG
-                                            /*
-
-                                            std::fstream file;
-                                            try {
-                                                file.exceptions ( std::ofstream::badbit | std::ofstream::failbit );
-                                                file.open("receipt.jpg", std::ios::out | std::ios::binary);
-                                                std::string jpeg_binary_data = base64::Decode(receipt_string);
-                                                file.write(jpeg_binary_data.c_str(), jpeg_binary_data.size());
-//                                                file << base64::Decode(receipt_string);
-                                            }
-                                            catch (const std::ofstream::failure& e) {
-                                                std::cout << "Failure to write binary file test\n";
-                                                if (file.is_open()) file.close();
-                                            }
-                                            if (file.is_open()) file.close();
-                                            */
-                                            //DEBUG
-                                            GlobalState::enqueuePrintJob(base64::Decode(receipt_string), JPEG);
-
-
-                                            return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": true}";
-                                        }
-                                    }
-                                }
-                                else if (itr->value == "cashbox")
-                                {
-//                                    std::cout << "Got CashBox Open Request\n";
-//                                    std::string temp = "dummy";
-                                    GlobalState::enqueuePrintJob("dummy", CASHDRAWER);
-                                    return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": true}";
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return "{\"jsonrpc\": \"2.0\", \"id\": " + ID + ", \"result\": false}";
-    }
+  catch (const nlohmann_json::exception &e) {
+    // output exception information
+    std::cout << "message: " << e.what() << '\n'
+              << "exception id: " << e.id << std::endl;
+    fprintf(stderr, "JSON parse error");
+    return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+  }
 }
+
+const std::string getResultTrueString(const char *request) {
+  // 1. Parse a JSON string into DOM.
+  //        std:: cout << "Got string: " << request << std::endl;
+
+  try {
+    nlohmann_json req = nlohmann_json::parse(request);
+    nlohmann_json id = req.at("id");
+    auto id_str = std::to_string(id.get<int>());
+    if (id.is_number()) {
+      return "{\"jsonrpc\": \"2.0\", \"id\": " +
+             id_str + ", \"result\": true}";
+    }
+    return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": true}";
+  } catch (const nlohmann_json::exception &e) {
+    // output exception information
+    std::cout << "message: " << e.what() << '\n'
+              << "exception id: " << e.id << std::endl;
+    fprintf(stderr, "JSON parse error");
+    return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+  }
+
+  return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+}
+
+const std::string PrinterDefaultAction(const char *request) {
+  // 1. Parse a JSON string into DOM.
+  //        std:: cout << "Got string: " << request << std::endl;
+
+  try {
+    nlohmann_json req = nlohmann_json::parse(request);
+    nlohmann_json id = req.at("id");
+    if (id.is_number()) {
+      nlohmann_json params = req.at("params");
+      nlohmann_json data = params.at("data");
+      nlohmann_json action = data.at("action");
+      auto action_string = action.template get<std::string>();
+      if (action_string == "print_receipt") {
+        nlohmann_json receipt = data.at("receipt");
+        auto receipt_data = nlohmann::to_string(receipt);
+        GlobalState::enqueuePrintJob(base64::Decode(receipt_data), JPEG);
+      } else if (action_string == "print_receipt_JSON") {
+        nlohmann_json receipt = data.at("receipt");
+        auto receipt_data = nlohmann::to_string(receipt);
+        GlobalState::enqueuePrintJob(std::move(receipt_data), JSON);
+      } else if (action_string == "cashbox") {
+        GlobalState::enqueuePrintJob("dummy", CASHDRAWER);
+        return "{\"jsonrpc\": \"2.0\", \"id\": " +
+               id.template get<std::string>() + ", \"result\": true}";
+      }
+    }
+    return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": true}";
+  } catch (const nlohmann_json::exception &e) {
+    // output exception information
+    std::cout << "message: " << e.what() << '\n'
+              << "exception id: " << e.id << std::endl;
+    fprintf(stderr, "JSON parse error");
+    return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+  }
+
+  return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+}
+
+// const std::string GetPrinterList(const char *request) {
+//     try {
+//         nlohmann_json req = nlohmann_json::parse(request);
+//         nlohmann_json id = req.at("id");
+//         if (id.is_number()) {
+//           return "{\"jsonrpc\": \"2.0\", \"id\": " +
+//                  id.template get<std::string>() + ", \"result\": false}";
+//         }
+//         return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+//       } catch (const nlohmann_json::exception &e) {
+//         // output exception information
+//         std::cout << "message: " << e.what() << '\n'
+//                   << "exception id: " << e.id << std::endl;
+//         fprintf(stderr, "JSON parse error");
+//         return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+//       }
+    
+//       return "{\"jsonrpc\": \"2.0\", \"id\": 0, \"result\": false}";
+// }
+} // namespace responseHandle

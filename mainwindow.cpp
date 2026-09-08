@@ -947,8 +947,8 @@ void MainWindow::onEvent(EventData d) {
 void MainWindow::closeEvent(QCloseEvent *event) {
   if (closing) {
     GlobalState::stopNetworkThread();
-    close();
     event->accept();
+    QApplication::quit();
   } else {
     hide();
     event->ignore();

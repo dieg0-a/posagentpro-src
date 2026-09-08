@@ -88,6 +88,7 @@ public:
 
   virtual bool printJPEG(const std::string &s);
   virtual bool printJPEG(const jpeg &jpeg_object);
+  virtual bool printJSON(const std::string &s);
 
   virtual ~Printer(){};
 
@@ -121,9 +122,11 @@ public:
 
   virtual bool send_raw(
       const std::string &buffer); // Send length bytes of data to the printer
+  virtual bool send_raw(const std::vector<unsigned char> buffer);
 
   bool printJPEG(const std::string &s);
   bool printJPEG(const jpeg &jpeg_object);
+  bool printJSON(const std::string &s);
 };
 
 class PrinterDummy : public Printer {
@@ -145,6 +148,7 @@ public:
   std::string getName() const { return name; };
   device_status updateAndGetStatus();
   bool send_raw(const std::string &buffer);
+  bool send_raw(const std::vector<unsigned char> buffer);
   ~PrinterLinuxUSBRAW(){};
 };
 
