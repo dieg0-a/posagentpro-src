@@ -11,6 +11,11 @@
 #include "Loop.h"
 #include "jpeg.hpp"
 
+#if defined(WIN32) || defined(_WIN32) ||                                       \
+defined(__WIN32) && !defined(__CYGWIN__)
+#include "windowsprinter.h"
+#endif
+
 int networkThread(int);
 
 enum json_rpc_type {

@@ -25,5 +25,9 @@ PrinterWindowsSpooler::PrinterWindowsSpooler()
         4);
     addField(new boolean_field("paper_cut", "Cut Paper", false), 5);
     addField(new boolean_field("cash_drawer", "Enable Cash Drawer", false), 6);
+    std::vector<std::string> codepage;
+    codepage.emplace(codepage.end(), std::string("IBM437"));
+
+    addField(new string_combo_list_field("codepage", "Printer Codepage", std::move(codepage), 0), 7);
 }
 #endif

@@ -123,80 +123,94 @@ std::vector<std::string> PrinterWindowsSpooler::enumeratePrinters()
 //std::string PrinterWindowsRawSpooler::getName() const {return fields.at("Name").get_combo_selected();};
 
 
+bool PrinterWindowsSpooler::send_raw(const std::vector<unsigned char> buffer) {
+    unsigned char *lpData = new unsigned char[buffer.size()];
+    memcpy_s(lpData, buffer.size(), buffer.data(), buffer.size());
+    DWORD dwCount = buffer.size();
+    return this->__send_raw(lpData, buffer.size());
+}
+
+bool PrinterWindowsSpooler::__send_raw(unsigned char* lpData, DWORD dwCount) {
+    BOOL bStatus = FALSE;
+    HANDLE hPrinter = NULL;
+    DOC_INFO_1A DocInfo;
+    DWORD dwPrtJob = 0L;
+    DWORD dwBytesWritten = 0L;
+
+    // unsigned char *lpData = new unsigned char[buffer2.size()];
+    // memcpy_s(lpData, buffer2.size(), buffer2.data(), buffer2.size());
+
+    auto printer_name = fields.at("name")->get_string();
+
+    //  char *lpData = new char[buffer2.size()];
+    //  strcpy_s(lpData, buffer2.size() + 1, buffer2.c_str());
+
+
+    //  LPSTR lpData = new char[buffer.size()];
+    //  strcpy_s(lpData, buffer.size()+1, buffer.c_str());
+    // DWORD dwCount = buffer2.size();
+
+    // Open a handle to the printer.
+    bStatus = OpenPrinterA(printer_name.data(), &hPrinter, NULL);
+
+    if (bStatus) {
+        // Fill in the structure with info about this "document."
+        CHAR document_name[] = "My Document";
+        DocInfo.pDocName =  document_name;
+        DocInfo.pOutputFile = NULL;
+
+        // Enter the datatype of this buffer.
+        //  Use "XPS_PASS" when the data buffer should bypass the
+        //    print filter pipeline of the XPSDrv printer driver.
+        //    This datatype would be used to send the buffer directly
+        //    to the printer, such as when sending print head alignment
+        //    commands. Normally, a data buffer would be sent as the
+        //    "RAW" datatype.
+        //
+        CHAR RAW[] = "RAW";
+        CHAR XPS_PASS[] = "XPS_PASS";
+        DocInfo.pDatatype = IsV4Driver(printer_name.data()) ? XPS_PASS : RAW;
+
+        dwPrtJob = StartDocPrinterA(
+            hPrinter,
+            1,
+            (LPBYTE)&DocInfo);
+
+        std::cout << "LPDATA: " << lpData << std::endl;
+
+        if (dwPrtJob > 0) {
+            std::cout << "Sending Data....\n";
+            // Send the data to the printer.
+            bStatus = WritePrinter(
+                hPrinter,
+                lpData,
+                dwCount,
+                &dwBytesWritten);
+            std::cout << "Bytes written: " << dwBytesWritten << std::endl;
+        }
+        EndPagePrinter(hPrinter);
+        EndDocPrinter(hPrinter);
+
+        // Close the printer handle.
+        bStatus = ClosePrinter(hPrinter);
+
+    }
+
+    if (!bStatus || (dwCount != dwBytesWritten)) {
+        bStatus = FALSE;
+    } else {
+        bStatus = TRUE;
+    }
+    delete [] lpData;
+    return bStatus;
+}
+
 bool PrinterWindowsSpooler::send_raw(const std::string &buffer2)
 {
-  BOOL bStatus = FALSE;
-  HANDLE hPrinter = NULL;
-  DOC_INFO_1A DocInfo;
-  DWORD dwPrtJob = 0L;
-  DWORD dwBytesWritten = 0L;
-
   unsigned char *lpData = new unsigned char[buffer2.size()];
   memcpy_s(lpData, buffer2.size(), buffer2.data(), buffer2.size());
-
-  auto printer_name = fields.at("name")->get_string();
-
-//  char *lpData = new char[buffer2.size()];
-//  strcpy_s(lpData, buffer2.size() + 1, buffer2.c_str());
-
-
-//  LPSTR lpData = new char[buffer.size()];
-//  strcpy_s(lpData, buffer.size()+1, buffer.c_str());
   DWORD dwCount = buffer2.size();
-
-  // Open a handle to the printer.
-  bStatus = OpenPrinterA(printer_name.data(), &hPrinter, NULL);
-
-  if (bStatus) {
-    // Fill in the structure with info about this "document."
-    CHAR document_name[] = "My Document";
-    DocInfo.pDocName =  document_name;
-    DocInfo.pOutputFile = NULL;
-
-    // Enter the datatype of this buffer.
-    //  Use "XPS_PASS" when the data buffer should bypass the
-    //    print filter pipeline of the XPSDrv printer driver.
-    //    This datatype would be used to send the buffer directly
-    //    to the printer, such as when sending print head alignment
-    //    commands. Normally, a data buffer would be sent as the
-    //    "RAW" datatype.
-    //
-    CHAR RAW[] = "RAW";
-    CHAR XPS_PASS[] = "XPS_PASS";
-    DocInfo.pDatatype = IsV4Driver(printer_name.data()) ? XPS_PASS : RAW;
-
-    dwPrtJob = StartDocPrinterA(
-        hPrinter,
-        1,
-        (LPBYTE)&DocInfo);
-
-    std::cout << "LPDATA: " << lpData << std::endl;
-
-    if (dwPrtJob > 0) {
-      std::cout << "Sending Data....\n";
-      // Send the data to the printer.
-      bStatus = WritePrinter(
-            hPrinter,
-            lpData,
-            dwCount,
-            &dwBytesWritten);
-    std::cout << "Bytes written: " << dwBytesWritten << std::endl;
-    }
-    EndPagePrinter(hPrinter);
-    EndDocPrinter(hPrinter);
-
-    // Close the printer handle.
-    bStatus = ClosePrinter(hPrinter);
-
-  }
-
-  if (!bStatus || (dwCount != dwBytesWritten)) {
-    bStatus = FALSE;
-  } else {
-    bStatus = TRUE;
-  }
-  delete [] lpData;
-  return bStatus;
+  return this->__send_raw(lpData, dwCount);
 }
 
 
