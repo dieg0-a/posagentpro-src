@@ -64,6 +64,7 @@ public slots:
   void scheduleDiplayPreviewUpdate();
   void paintPrintPreview(QPrinter *printer);
   void saveOptionChanges();
+  void fetchPrinterStatus();
   void showAbout(bool toggled);
 
 private:
@@ -92,6 +93,7 @@ private:
   QIcon *printer_status_off_icon;
 
   QTimer *display_timer;
+  QTimer *fetch_printer_status_timer;
 
   static QSettings program_settings;
 

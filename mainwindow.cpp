@@ -696,6 +696,11 @@ void MainWindow::saveOptionChanges() {
   bool_to_save.clear();
 }
 
+
+void MainWindow::fetchPrinterStatus() {
+    GlobalState::updatePrinterStatus();
+}
+
 bool MainWindow::scheduleOptionSaveStr(const std::string &name,
                                        const std::string &value) {
   str_to_save[name] = value;
@@ -771,6 +776,14 @@ MainWindow::MainWindow(QWidget *parent)
   QObject::connect(option_save_timer, SIGNAL(timeout()), this,
                    SLOT(saveOptionChanges()));
   option_save_timer->start();
+
+  fetch_printer_status_timer = new QTimer(this);
+  fetch_printer_status_timer->setInterval(5000);
+  QObject::connect(fetch_printer_status_timer, SIGNAL(timeout()), this,
+                   SLOT(fetchPrinterStatus()));
+  fetch_printer_status_timer->start();
+
+
   active_window = this;
   // receipt_preview_pixmap = new QPixmap();
 
@@ -834,7 +847,7 @@ MainWindow::MainWindow(QWidget *parent)
   printer_status_on_icon = new QIcon(":/images/images/printer_green.png");
   printer_status_off_icon = new QIcon(":/images/images/printer_red.png");
 
-  GlobalState::updatePrinterStatus();
+//  GlobalState::updatePrinterStatus();
 
   printer_status_widget->setLayout(new QHBoxLayout());
   printer_status_widget->layout()->addWidget(printer_status_label);
