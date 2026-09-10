@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include <QString>
 #include <QStringConverter>
@@ -340,11 +341,17 @@ private:
     void printTwoColumn(
         ByteStream& out,
         const std::string& left,
-        const std::string& right)
+        const std::string& right,
+        bool encode_strings = true)
     {
-        auto encodedLeft = this->encodeString(left);
-        auto encodedRight = this->encodeString(right);
-        text(out, twoColumn(encodedLeft, encodedRight), false);
+        if (encode_strings) {
+            auto encodedLeft = this->encodeString(left);
+            auto encodedRight = this->encodeString(right);
+            text(out, twoColumn(encodedLeft, encodedRight), false);
+        }
+        else {
+            text(out, twoColumn(left, right), false);
+        }
         newline(out);
     }
 
@@ -701,19 +708,67 @@ private:
         std::string productName =
             qty + name;
 
-        if (!price.empty())
+        if (price.length() >= m_options.charsPerLine - 5) {
+            text(out, "Price too long cannot print");
+            newline(out);
+            return;
+        }
+
+        std::string priceEncoded = encodeString(price);
+        std::string productNameEncoded = encodeString(productName);
+        std::string firstLine =  productNameEncoded.substr(0,
+                                                  std::min((unsigned long)(m_options.charsPerLine-priceEncoded.length() - 1),
+                                           productNameEncoded.length()));
+        std::string lastLine = productNameEncoded.substr(std::min((unsigned long)(m_options.charsPerLine-priceEncoded.length() - 1),
+                                                                  productNameEncoded.length()));
+
+        if (!priceEncoded.empty())
         {
             printTwoColumn(
                 out,
-                productName,
-                price
-            );
+                firstLine,
+                priceEncoded,
+                false
+                );
         }
         else
         {
-            text(out, productName);
+            text(out, firstLine);
             newline(out);
         }
+
+
+
+
+        while (lastLine.length() > 0) {
+            if (lastLine.length() > m_options.charsPerLine-1) {
+                text(out,
+                     lastLine.substr(0,
+                                     (unsigned long)(m_options.charsPerLine-1)), false);
+                lastLine = lastLine.substr((m_options.charsPerLine-1));
+            }
+            else {
+                text(out, lastLine, false);
+                lastLine = "";
+                newline(out);
+                break;
+            }
+            newline(out);
+        }
+
+        // if (!price.empty())
+        // {
+        //     printTwoColumn(
+        //         out,
+        //         lastLine,
+        //         price
+        //     );
+        // }
+        // else
+        // {
+        //     text(out, lastLine);
+        //     newline(out);
+        // }
 
         /*
          * Attribute string

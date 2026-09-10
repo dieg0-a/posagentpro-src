@@ -74,8 +74,8 @@ const std::string PrinterDefaultAction(const char *request) {
       nlohmann_json action = data.at("action");
       auto action_string = action.template get<std::string>();
       if (action_string == "print_receipt") {
-        nlohmann_json receipt = data.at("receipt");
-        auto receipt_data = nlohmann::to_string(receipt);
+//        nlohmann_json receipt = data.at("receipt");
+        std::string receipt_data = data.at("receipt");
         GlobalState::enqueuePrintJob(base64::Decode(receipt_data), JPEG);
       } else if (action_string == "print_receipt_JSON") {
         nlohmann_json receipt = data.at("receipt");
