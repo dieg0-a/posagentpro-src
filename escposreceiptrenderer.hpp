@@ -355,6 +355,25 @@ private:
         newline(out);
     }
 
+    std::string stripLeadingAndTrailingNLs(const std::string &str) {
+        const std::string whitespace = " \t\n\r\f\v";
+
+        // Find the first character that is not a whitespace
+        const auto start = str.find_first_not_of(whitespace);
+        if (start == std::string::npos) {
+            return ""; // The string is entirely whitespace
+        }
+
+        // Find the last character that is not a whitespace
+        const auto end = str.find_last_not_of(whitespace);
+
+        // Calculate the length of the trimmed substring
+        const auto range = end - start + 1;
+
+        return str.substr(start, range);
+
+    }
+
 
     // ================================================================
     // Header
@@ -522,8 +541,67 @@ private:
         }
 
         newline(out);
-
         alignLeft(out);
+
+        const auto &partner = order.at("partner");
+        if (!partner.is_null() && partner.is_object()) {
+            alignCenter(out);
+            std::string name = jsonString(partner, "name");
+
+            if (!name.empty()) {
+                text(out, name);
+                newline(out);
+                std::string parentName = jsonString(partner, "parentName");
+                if (!parentName.empty()) {
+                    text(out, parentName);
+                    newline(out);
+                }
+            }
+
+            std::string posContactAddress = jsonString(partner, "posContactAddress");
+            if (!posContactAddress.empty()) {
+                std::vector<std::string> tokens;
+                std::string token;
+
+                // Create a stringstream from your string
+                std::stringstream ss(posContactAddress);
+
+                // Split by the comma delimiter
+                while (std::getline(ss, token, '\n')) {
+                    tokens.push_back(token);
+                }
+
+                // Print the results
+                std::string line = "";
+                for (const auto& t : tokens) {
+                    if (t.empty())
+                        continue;
+                    // Find the first character that is not a whitespace
+                    const std::string whitespace = " \t\n\r\f\v";
+                    const auto start = t.find_first_not_of(whitespace);
+                    if (start == std::string::npos) {
+                        continue; // The string is entirely whitespace
+                    }
+
+                    if (line.length() + t.length() + 1 <= m_options.charsPerLine)
+                        line += " " + t;
+                    else {
+                        text(out, line);
+                        newline(out);
+                        line = t;
+                    }
+                }
+                text(out, line);
+                newline(out);
+            }
+            std::string vat = jsonString(partner, "vat");
+            if (!vat.empty()) {
+                text(out, vat);
+                newline(out);
+            }
+            alignLeft(out);
+            newline(out);
+        }
     }
 
 
